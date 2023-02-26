@@ -178,8 +178,15 @@ class UaS_MedicalDebug : EventHandler {
 		if (!wh) { return; }
 
 		string whInfo = "";
-		if (wh.critwounds.Size() > 0) { whInfo = wh.critwounds.Size().." wounds!\n"; }
-		else { whInfo = "No wounds ('-')b\n"; }
+
+		// player status
+		if (wh.critwounds.Size() > 0) { whInfo = wh.critwounds.Size().." wounds!"; }
+		else { whInfo = "No wounds ('-')b"; }
+
+		whInfo = String.Format(
+			"%s | bloss %i (%f) | burns %i\n",
+			whInfo, hdp.bloodloss, double(hdp.bloodloss) / (HDCONST_BLOODBAGAMOUNT<<2), hdp.burncount
+		);
 
 		for (int i = 0; i < wh.critwounds.Size(); i++) {
 			if (!wh.critwounds[i]) { continue; }
@@ -190,7 +197,7 @@ class UaS_MedicalDebug : EventHandler {
 			);
 			if (wi.hdbw) {
 				whInfo = String.Format(
-					"%s %f/%f/%f | width %f | regenrate %f",
+					"%s \c[red]%f\c-/\c[gold]%f\c-/\c[darkgray]%f\c- | width %f | regenrate %f",
 					whInfo, wi.hdbw.depth, wi.hdbw.patched, wi.hdbw.sealed, wi.hdbw.width, wi.hdbw.regenrate
 				);
 			}
