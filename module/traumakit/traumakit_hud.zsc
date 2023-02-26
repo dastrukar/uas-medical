@@ -159,13 +159,13 @@ extend class UaS_TraumaKit {
 				// Cavity
 				if (currentWound.cavity >= 0) {
 					tmpStr = "no treatable tissue damage";
-					if (currentWound.cavity >= 85) { tmpStr = "severe tissue damage"; }
-					else if (currentWound.cavity >= 65) { tmpStr = "significant tissue damage"; }
-					else if (currentWound.cavity >= 45) { tmpStr = "moderate tissue damage"; }
-					else if (currentWound.cavity >= 25) { tmpStr = "some tissue damage"; }
-					else if (currentWound.cavity >= 15) { tmpStr = "little tissue damage"; }
+					if (currentWound.cavity >= 8.5) { tmpStr = "severe tissue damage"; }
+					else if (currentWound.cavity >= 6.5) { tmpStr = "significant tissue damage"; }
+					else if (currentWound.cavity >= 4.5) { tmpStr = "moderate tissue damage"; }
+					else if (currentWound.cavity >= 2.5) { tmpStr = "some tissue damage"; }
+					else if (currentWound.cavity >= 1.5) { tmpStr = "little tissue damage"; }
 
-					status.Push("-There is "..GetStatusColor(currentWound.cavity)..tmpStr);
+					status.Push("-There is "..GetStatusColor(currentWound.cavity * 10)..tmpStr);
 					woundInfoOffsetY -= halfStep;
 				}
 			}

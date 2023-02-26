@@ -108,7 +108,7 @@ extend class UaS_WoundInfo {
 		int retvalue, counted;
 		if (dirty >= 0) { retvalue += dirty; counted++; }
 		if (obstructed >= 0) { retvalue += obstructed; counted++;}
-		if (cavity >= 0) { retvalue += cavity; counted++;}
+		if (cavity >= 0) { retvalue += cavity * 10; counted++;}
 		if (open >= 0) { retvalue += open * 10; counted++;}
 		//retvalue += infection;
 		avgstat = retvalue / counted;
@@ -127,7 +127,7 @@ extend class UaS_WoundInfo {
 		nw.dirty = max(-1, randompick[uas_wi](-1, 1, 1, 1) * random[uas_wi](depthmin, depthmax));
 		nw.obstructed = max(-1, randompick[uas_wi](-1, 1) * random[uas_wi](depthmin, depthmax));
 		//nw.cavity = max(-1, randompick[uas_wi](-1, 1, 1) * random[uas_wi](depthmin, depthmax));
-		nw.cavity = hdbw.width * 5;
+		nw.cavity = hdbw.width * frandom(3, 6);
 		nw.infection = (nw.dirty + nw.obstructed + nw.open + nw.cavity) / 4;
 		//nw.open = random[uas_wi](depthmin, depthmax);
 		nw.open = hdbw.depth;
@@ -184,9 +184,20 @@ class UaS_MedicalDebug : EventHandler {
 		for (int i = 0; i < wh.critwounds.Size(); i++) {
 			if (!wh.critwounds[i]) { continue; }
 			let wi = UaS_WoundInfo(wh.critwounds[i]);
-			whInfo = whInfo..i..": open "..wi.open.." | cavity "..wi.cavity.." | stable? "..wi.stabilised.." "..wi.stablePatched.." | hdbw? "..wi.hdbw;
-			if (wi.hdbw) { whInfo = whInfo.." "..wi.hdbw.depth.."/"..wi.hdbw.patched.."/"..wi.hdbw.sealed.." | regenrate "..wi.hdbw.regenrate; }
-			whInfo = whInfo.." | avgstat "..wi.avgstat.." | timer "..wi.timer;
+			whInfo = String.Format(
+				"%s%i: open %f | cavity %f | stable? %i %f | hdbw? %i",
+				whInfo, i, wi.open, wi.cavity, wi.stabilised, wi.stablePatched, (wi.hdbw)? 1 : 0
+			);
+			if (wi.hdbw) {
+				whInfo = String.Format(
+					"%s %f/%f/%f | width %f | regenrate %f",
+					whInfo, wi.hdbw.depth, wi.hdbw.patched, wi.hdbw.sealed, wi.hdbw.width, wi.hdbw.regenrate
+				);
+			}
+			whInfo = String.Format(
+				"%s | avgstat %i | timer %i",
+				whInfo, wi.avgstat, wi.timer
+			);
 			whInfo = whInfo.."\n";
 		}
 

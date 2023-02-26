@@ -53,13 +53,13 @@ extend class UaS_TraumaKit {
 
 				// semi-normalized distribution for success check
 				int check = (
-					random[uas_tk](0,50) +
-					random[uas_tk](0,100)) / 2;
+					frandom[uas_tk](0,5) +
+					frandom[uas_tk](0,10)) / 2;
 
 				// remove some tissue damage
 				if (check < currentWound.cavity) {
 					patient.A_StartSound("misc/bulletflesh",CHAN_BODY, CHANF_DEFAULT, 0.2);
-					currentWound.cavity = max(currentWound.cavity - 1, 0);
+					currentWound.cavity = max(currentWound.cavity - frandom(0.1, 0.4), 0);
 					//if(random[uas_tk](0,5)) { PlaySkinSound(SKINSOUND_GRUNT,"*grunt"); }
 					patient.A_MuzzleClimb(
 						(frandom[uas_tk](-.1,.1),frandom[uas_tk](-.1,.1)),
