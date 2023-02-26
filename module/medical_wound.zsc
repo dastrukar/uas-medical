@@ -51,14 +51,14 @@ class UaS_WoundInfo : thinker {
 			// Wound heals some points
 			if (avgstat < 15) {
 				double multiplier = (avgstat <= 0)? 1 : 15 / avgstat;
-				if (open > 0.) { TrySealWound(frandom(0.0, 0.5 * multiplier)); }
-				if (cavity > 0.) { cavity = max(cavity - frandom(0.1, 0.5 * multiplier), 0); }
+				if (open > 0.) { TrySealWound(frandom(0.0, 0.2 * multiplier)); }
+				if (cavity > 0.) { cavity = max(cavity - frandom(0.1, 0.2 * multiplier), 0); }
 				if (dirty > 0) { dirty--; }
 				if (obstructed > 0) { obstructed--; }
 				if (infection > 0) { infection--; }
 
 				// Wound is good enough to start fully heal up
-				if (hdbw.sealed > 0.) { hdbw.sealed = max(hdbw.sealed - frandom(0, 0.7 * multiplier), 0); }
+				if (hdbw.sealed > 0.) { hdbw.sealed = max(hdbw.sealed - frandom(0, 0.4 * multiplier), 0); }
 			}
 
 			// Infection increases
