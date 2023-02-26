@@ -8,5 +8,4 @@ side note: this is poorly fixed up, so do expect some weird bugs/inconsistency.
  - Removed autostrip, because it doesn't exist.
 
 ## Technical changes
- - Cavity is based on the width of your wound.
- - Scalpel now gives an actual wound, which does in fact bleed.
+ - Cavity is based on the width of your wound
