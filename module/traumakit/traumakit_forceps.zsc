@@ -72,7 +72,7 @@ extend class UaS_TraumaKit {
 			// increase cavity on overshoot
 			// NOTE: increase width as well?
 			if (remove > currentWound.obstructed) {
-				currentWound.cavity = min(currentWound.cavity + (remove / 2), 100);
+				currentWound.cavity = currentWound.cavity + (remove / 10);
 				result = result..", damaging the surrounding tissue.";
 			}
 			else {
