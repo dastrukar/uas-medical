@@ -48,7 +48,8 @@ class UaS_WoundStabilization : HDWeapon {
 		{
 			UaS_WoundInfo wound = wh.critwounds[i];
 			if (
-				wound.hdbw
+				wound
+				&& wound.hdbw
 				&& wound.hdbw.bleeder == patient
 				&& !wound.stabilised
 				&& wound.hdbw.depth <= 0
