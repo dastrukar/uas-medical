@@ -169,6 +169,7 @@ class UaS_MedicalDebug : EventHandler {
 	ui HUDFont pFont;
 
 	override void RenderOverlay(RenderEvent e) {
+		if (!uas_medical_debug) { return; }
 		let hdp = HDPlayerPawn(e.Camera);
 		if (!hdp) { return; }
 
