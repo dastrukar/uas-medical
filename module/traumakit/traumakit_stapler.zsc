@@ -39,7 +39,7 @@ extend class UaS_TraumaKit {
 				(frandom[uas_tk](-1,1),frandom[uas_tk](-1,1)),
 				(frandom[uas_tk](-1,1),frandom[uas_tk](-1,1))
 			);
-			currentWound.TrySealWound(frandom[uas_tk](1,2));
+			currentWound.Patch(frandom[uas_tk](1,2), true);
 		}
 	}
 }

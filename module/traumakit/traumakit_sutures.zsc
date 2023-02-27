@@ -37,11 +37,11 @@ extend class UaS_TraumaKit {
 					PainJolt();
 					patient.damagemobj(owner,owner,1,"staples");
 					weaponstatus[TK_HOLD] = -1;
-					currentWound.TrySealWound(max(currentWound.open - random[uas_tk](1,5), 0));
+					currentWound.Patch(max(currentWound.open - random[uas_tk](1,5), 0));
 				}
 				else {
 					//if(random[uas_tk](0,1)) { PlaySkinSound(SKINSOUND_GRUNT,"*grunt"); }
-					currentWound.TrySealWound(max(currentWound.open - random[uas_tk](2,5), 0));
+					currentWound.Patch(max(currentWound.open - random[uas_tk](2,5), 0));
 				}
 			}
 		}

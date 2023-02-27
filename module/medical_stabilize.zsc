@@ -2,7 +2,7 @@ class UaS_WoundStabilization : HDWeapon {
 	int pressure, hemostatic;
 	string statusMessage;
 	StatusInfo currentMessage;
-	UaS_WoundInfo currentWound;
+	UaS_Wound currentWound;
 	HDPlayerPawn patient;
 
 	Default {
@@ -39,21 +39,20 @@ class UaS_WoundStabilization : HDWeapon {
 	}
 
 	// Criteria is currently just "wound must be fully bandaged"
-	UaS_WoundInfo GetBandagedWound()
+	UaS_Wound GetBandagedWound()
 	{
 		let wh = UaS_WoundHandler(patient.FindInventory('UaS_WoundHandler'));
 		if (!wh) { return NULL; }
 
 		for (int i = 0; i < wh.critwounds.Size(); i++)
 		{
-			UaS_WoundInfo wound = wh.critwounds[i];
+			UaS_Wound wound = wh.critwounds[i];
 			if (
 				wound
-				&& wound.hdbw
-				&& wound.hdbw.bleeder == patient
+				&& wound.bleeder == patient
 				&& !wound.stabilised
-				&& wound.hdbw.depth <= 0
-				&& wound.hdbw.patched > 0
+				&& wound.depth <= 0
+				&& wound.patched > 0
 			) { return wound; }
 		}
 
@@ -64,7 +63,7 @@ class UaS_WoundStabilization : HDWeapon {
 		SetPatient();
 		if (
 			!currentWound
-			|| HDPlayerPawn(currentWound.hdbw.bleeder) != patient
+			|| HDPlayerPawn(currentWound.bleeder) != patient
 			|| currentWound.stabilised
 		) { currentWound = GetBandagedWound(); }
 
@@ -169,8 +168,7 @@ class UaS_WoundStabilization : HDWeapon {
 				hemostatic = max(hemostatic - 1, 0);
 				pressure = 50;
 				currentWound.stabilised = true;
-				currentWound.stablePatched = currentWound.hdbw.patched;
-				currentWound.hdbw.width = 0;
+				//currentWound.width = 0;
 				currentWound = GetBandagedWound();
 				//patient.unstablewoundcount = max(patient.unstablewoundcount - 1, 0);
 				//patient.oldwoundcount = max(patient.oldwoundcount + 1, 0);

@@ -31,7 +31,7 @@ extend class UaS_TraumaKit {
 			if (!currentWound) {
 				owner.A_StartSound("bandage/rip",CHAN_WEAPON);
 				patient.damagemobj(owner,owner,5,"staples");
-				hdbleedingwound.inflict(patient, frandom(0.4, 2.4), frandom(0.6, 1.8), source: owner);
+				wh.AppendWound(HDBleedingWound.Inflict(patient, frandom(0.4, 2.4), frandom(0.6, 1.8), source: owner));
 				return;
 			}
 
@@ -51,8 +51,8 @@ extend class UaS_TraumaKit {
 				(frandom[uas_tk](-1,1),frandom[uas_tk](1,1))
 			);
 			double newDepth = min(currentWound.open + frandom[uas_tk](0.5,2.0-currentWound.painkiller), 20.0);
-			currentWound.hdbw.sealed = max(currentWound.hdbw.sealed - newDepth, 0);
-			currentWound.hdbw.depth = newDepth;
+			currentWound.sealed = max(currentWound.sealed - newDepth, 0);
+			currentWound.depth = newDepth;
 			currentWound.cavity = min(currentWound.cavity + frandom[uas_tk](0,2.0-(currentWound.painkiller/4)), 20.0);
 			return;
 		}

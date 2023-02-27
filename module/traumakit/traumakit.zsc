@@ -3,7 +3,7 @@ const UAS_HDLD_TRAUMAKIT = "trk";
 class UaS_TraumaKit : HDWeapon {
 	string statusMessage;
 	StatusInfo currentMessage;
-	UaS_WoundInfo currentWound;
+	UaS_Wound currentWound;
 	UaS_WoundHandler wh;
 	HDPlayerPawn patient, lastpatient;
 
@@ -161,7 +161,7 @@ class UaS_TraumaKit : HDWeapon {
 		}
 	}
 
-	UaS_WoundInfo GetWound(int index) {
+	UaS_Wound GetWound(int index) {
 		if (wh.critwounds.size() <= 0) { return null; }
 		return wh.critwounds[index];
 	}

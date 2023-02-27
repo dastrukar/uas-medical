@@ -4,6 +4,7 @@ version "4.9"
 #include "module/medical_spawner.zsc"
 #include "module/medical_stabilize.zsc"
 #include "module/medical_wound.zsc"
+#include "module/medical_debug.zsc"
 
 #include "module/traumakit/traumakit.zsc"
 #include "module/traumakit/traumakit_2f.zsc"

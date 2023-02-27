@@ -1,5 +1,4 @@
-class UaS_WoundInfo : thinker {
-	HDBleedingWound hdbw;
+class UaS_Wound : HDBleedingWound {
 	string description;
 	int painkiller;
 	int dirty;
@@ -12,54 +11,24 @@ class UaS_WoundInfo : thinker {
 	double open;
 	double cavity; // cavity and width can't be the same, as width determines bleedrate
 	bool stabilised;
-	double stablePatched;
-
-	override void PostBeginPlay() {
-		super.PostBeginPlay();
-		ChangeStatNum(STAT_STATIC);
-	}
 
 	override void Tick() {
 		Super.Tick();
-		if (!hdbw) { self.Destroy(); return; }
-		if (hdbw.bleeder.IsFrozen()) { return; }
 
 		// depth doesn't really equal to wound being open
-		open = hdbw.depth + hdbw.patched;
-
-		// Stabilised wounds can't bleed
-		if (stabilised) {
-			hdbw.depth = 0;
-			hdbw.patched = stablePatched;
-		}
-
-		// Don't automatically regen (unless stapled)
-		hdbw.regenrate = 0;
+		open = depth + patched;
 
 		UpdateAverageStatus();
 		timer = max(timer - 1, 0);
 		pain = max(pain - 1, 0);
 		pain = max(pain - painkiller / 20, 0);
+
+		if (avgstat < 15) { regenrate = (avgstat <= 0)? 0.5 : 0.5 * (15 - avgstat) / 15; }
+		else { regenrate = 0; }
+
 		if (timer <= 0) {
 			// Metabolize some painkiller
 			painkiller = max(painkiller - 1, 0);
-
-			// For now prevent wounds from regenerating naturally
-			// Later this will be influenced by our additional status trackers
-			hdbw.regenrate = 0;
-
-			// Wound heals some points
-			if (avgstat < 15) {
-				double multiplier = (avgstat <= 0)? 1 : 15 / avgstat;
-				if (open > 0.) { TrySealWound(frandom(0.0, 0.2 * multiplier)); }
-				if (cavity > 0.) { cavity = max(cavity - frandom(0.1, 0.2 * multiplier), 0); }
-				if (dirty > 0) { dirty--; }
-				if (obstructed > 0) { obstructed--; }
-				if (infection > 0) { infection--; }
-
-				// Wound is good enough to start fully heal up
-				if (hdbw.sealed > 0.) { hdbw.sealed = max(hdbw.sealed - frandom(0, 0.4 * multiplier), 0); }
-			}
 
 			// Infection increases
 			/*
@@ -72,28 +41,30 @@ class UaS_WoundInfo : thinker {
 		}
 	}
 
-	// Because decrementing open doesn't really patch anything
-	void TrySealWound(double sealAmount)
-	{
-		double sealed = 0;
-		if (hdbw.depth > 0)
-		{
-			double newDepth = max(hdbw.depth - sealAmount, 0);
-			sealed += hdbw.depth - newDepth;
-			sealAmount -= sealed;
-			hdbw.depth = newDepth;
-		}
+	override void ComeUndone() {
+		if (stabilised) { return; }
+		Super.ComeUndone();
+	}
 
-		double newPatched;
-		if (hdbw.patched)
-		{
-			newPatched = max(hdbw.patched - sealAmount, 0);
-			sealed += hdbw.patched - newPatched;
-			if (stabilised) { stablePatched = newPatched; }
-			hdbw.patched = newPatched;
-		}
+	override void Regenerate() {
+		//if (hdbw.sealed > 0.) { hdbw.sealed = max(hdbw.sealed - frandom(0, 0.4 * multiplier), 0); }
+		//if (open > 0.) { TrySealWound(frandom(0.0, 0.2 * multiplier)); }
 
-		hdbw.sealed += sealed;
+		if (depth > 0. || patched > 0.) { Patch(frandom(0.0, 0.2 * regenrate), true); }
+		else if (sealed > 0.) { sealed = max(sealed - frandom(0, 0.4 * regenrate), 0); }
+
+		if (cavity > 0.) { cavity = max(cavity - frandom(0.0, 0.2 * regenrate), 0); }
+
+		// Chance to heal status (NOTE: i should change this)
+		if (frandom(0, 1) > regenrate) { return; }
+
+		//Console.PrintF("healing?");
+		if (dirty > 0) { dirty--; }
+		if (obstructed > 0) { obstructed--; }
+		if (infection > 0) { infection--; }
+
+		// regenrate works really damn weirdly, which makes sense since wounds normally depend on 2f to heal
+		//Super.Regenerate();
 	}
 
 	bool inpain(int inflict = 0) {
@@ -103,7 +74,8 @@ class UaS_WoundInfo : thinker {
 }
 
 // Status methods
-extend class UaS_WoundInfo {
+extend class UaS_Wound {
+	// NOTE: Update the values, ples
 	void UpdateAverageStatus() {
 		int retvalue, counted;
 		if (dirty >= 0) { retvalue += dirty; counted++; }
@@ -116,13 +88,14 @@ extend class UaS_WoundInfo {
 }
 
 // Static methods
-extend class UaS_WoundInfo {
-	static UaS_WoundInfo create(HDBleedingWound hdbw) {
+extend class UaS_Wound {
+	static UaS_Wound Create(HDBleedingWound hdbw) {
 		// NOTE: adjust these values later
 		int depthmin = clamp(hdbw.depth * 10, 0, 100);
 		int depthmax = clamp(hdbw.depth * 20, 0, 100);
-		UaS_WoundInfo nw = new("UaS_WoundInfo");
-		nw.hdbw = hdbw;
+
+		UaS_Wound nw = new("UaS_Wound");
+
 		nw.painkiller = 0;
 		nw.dirty = max(-1, randompick[uas_wi](-1, 1, 1, 1) * random[uas_wi](depthmin, depthmax));
 		nw.obstructed = max(-1, randompick[uas_wi](-1, 1) * random[uas_wi](depthmin, depthmax));
@@ -132,21 +105,32 @@ extend class UaS_WoundInfo {
 		//nw.open = random[uas_wi](depthmin, depthmax);
 		nw.open = hdbw.depth;
 		nw.timer = (random[uas_wi](10, 30) * 35);
-		//nw.depth = newdepth;
 		nw.description = WoundDescription(hdbw.depth);
-		nw.stabilised = false;
+
+		// Inherit
+		nw.bleeder = hdbw.bleeder;
+		nw.source = nw.source;
+		nw.depth = hdbw.depth; // How big is the wound?
+		nw.width = hdbw.width; // Affects bleedrate, somewhat
+		nw.patched = hdbw.patched;
+		nw.sealed = hdbw.sealed;
+		nw.regenrate = 0; // avgstat will influence this
+		nw.damagetype = hdbw.damagetype;
+		nw.location = hdbw.location; // Could be used for flavour text?
+		nw.age = hdbw.age;
+
 		return nw;
 	}
 
 	static string WoundDescription(int newsize) {
-		int sevmax = UaS_WoundInfo.severity.size()-1;
-		int typmax = UaS_WoundInfo.type.size()-1;
-		int parmax = UaS_WoundInfo.bodypart.size()-1;
+		int sevmax = UaS_Wound.severity.size()-1;
+		int typmax = UaS_Wound.type.size()-1;
+		int parmax = UaS_Wound.bodypart.size()-1;
 		return string.format(
 			"%s %s, %s",
-			UaS_WoundInfo.severity[random[uas_wi](0, sevmax)],
-			UaS_WoundInfo.type[random[uas_wi](0, typmax)],
-			UaS_WoundInfo.bodypart[random[uas_wi](0, parmax)]
+			UaS_Wound.severity[random[uas_wi](0, sevmax)],
+			UaS_Wound.type[random[uas_wi](0, typmax)],
+			UaS_Wound.bodypart[random[uas_wi](0, parmax)]
 		);
 	}
 
@@ -163,53 +147,4 @@ extend class UaS_WoundInfo {
 		"left calf","right calf",
 		"left shin","right shin"
 	};
-}
-
-class UaS_MedicalDebug : EventHandler {
-	ui HUDFont pFont;
-
-	override void RenderOverlay(RenderEvent e) {
-		if (!uas_medical_debug) { return; }
-		let hdp = HDPlayerPawn(e.Camera);
-		if (!hdp) { return; }
-
-		if (!pFont) { pFont = HUDFont.Create(NewSmallFont); }
-
-		let wh = UaS_WoundHandler(hdp.FindInventory("UaS_WoundHandler"));
-		if (!wh) { return; }
-
-		string whInfo = "";
-
-		// player status
-		if (wh.critwounds.Size() > 0) { whInfo = wh.critwounds.Size().." wounds!"; }
-		else { whInfo = "No wounds ('-')b"; }
-
-		whInfo = String.Format(
-			"%s | bloss %i (%f) | burns %i\n",
-			whInfo, hdp.bloodloss, double(hdp.bloodloss) / (HDCONST_BLOODBAGAMOUNT<<2), hdp.burncount
-		);
-
-		for (int i = 0; i < wh.critwounds.Size(); i++) {
-			if (!wh.critwounds[i]) { continue; }
-			let wi = UaS_WoundInfo(wh.critwounds[i]);
-			whInfo = String.Format(
-				"%s%i: open %f | cavity %f | stable? %i %f | hdbw? %i",
-				whInfo, i, wi.open, wi.cavity, wi.stabilised, wi.stablePatched, (wi.hdbw)? 1 : 0
-			);
-			if (wi.hdbw) {
-				whInfo = String.Format(
-					"%s \c[red]%f\c-/\c[gold]%f\c-/\c[darkgray]%f\c- | width %f | regenrate %f",
-					whInfo, wi.hdbw.depth, wi.hdbw.patched, wi.hdbw.sealed, wi.hdbw.width, wi.hdbw.regenrate
-				);
-			}
-			whInfo = String.Format(
-				"%s | avgstat %i | timer %i",
-				whInfo, wi.avgstat, wi.timer
-			);
-			whInfo = whInfo.."\n";
-		}
-
-		Screen.DrawText(NewSmallFont, OptionMenuSettings.mFontColorValue, 10, 10, whInfo);
-		//StatusBar.DrawString(pFont, whInfo, (0, 0));
-	}
 }
