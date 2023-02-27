@@ -193,6 +193,24 @@ extend class UaS_TraumaKit {
 			);
 		}
 
+		// Tool list
+		float toolListOffset = baseOffset + (4 * textHeight) + (6 * padStep);
+		string toolList = "";
+		for (int i = 0; i <= T_SCALPEL; i++) {
+			toolList = String.Format(
+				"%s%s%s%s",
+				toolList, (i != 0)? "   " : "", (weaponstatus[TK_SELECTED] == i)? "\c[white]" : "\c[darkgrey]", toolShortNames[i]
+			);
+		}
+
+		sb.DrawString(
+			sb.pSmallFont,
+			toolList,
+			(0, toolListOffset),
+			sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_CENTER,
+			scale: hudscale
+		);
+
 		// Tool info
 		float toolInfoOffset = baseOffset + (4 * textHeight) + (7 * padStep);
 		Array<string> trueStatusMessage;
@@ -224,4 +242,6 @@ extend class UaS_TraumaKit {
 		if (amount >= 0) { return "\cd"; } // Grey (wait, isn't this green?)
 		return "\cj"; // White
 	}
+
+	static const string[] toolShortNames = { "AT", "SL", "FC", "BF", "SP", "ST", "SC" };
 }
