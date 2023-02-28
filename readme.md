@@ -7,6 +7,7 @@ side note: this is poorly fixed up, so do expect some weird bugs/inconsistency.
  - Stabilised wounds can still be sealed up with Second Flesh. (might nerf/change this)
  - Removed autostrip, because it doesn't exist.
  - Trauma kit now has a tool list.
+ - Fixed wounds will heal some tissue damage. (fixing with 2f will also do this, so i might have to change that)
 
 ## Technical changes
  - `UaS_WoundInfo` now replaces `HDBleedingWound`.
