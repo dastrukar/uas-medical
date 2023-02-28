@@ -13,6 +13,19 @@ class UaS_Wound : HDBleedingWound {
 	bool stabilised;
 
 	override void Tick() {
+		// Heal some old wounds before getting destroyed?
+		if (
+			bleeder
+			&& HDPlayerPawn(bleeder)
+			&& (
+				age
+				&& CheckDestroy()
+			)
+		) {
+			let hdp = HDPlayerPawn(bleeder);
+			hdp.oldwoundcount = max(hdp.oldwoundcount - random(2, 5), 0);
+		}
+
 		Super.Tick();
 
 		// depth doesn't really equal to wound being open
