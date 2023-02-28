@@ -256,5 +256,5 @@ extend class UaS_TraumaKit {
 	}
 
 	static const string[] toolListNames = { "AT", "SL", "FC", "BF", "SP", "ST", "SC" };
-	static const string[] toolListIcons = { "ANESTH", "BIOFOAM", "FORCEPS", "SALINE", "SCALPEL", "STAPLER", "SUTURE" };
+	static const string[] toolListIcons = { "ANESTH", "SALINE", "FORCEPS", "BIOFOAM", "STAPLER", "SUTURE", "SCALPEL" };
 }
