@@ -15,12 +15,11 @@ class UaS_Wound : HDBleedingWound {
 	override void Tick() {
 		// Heal some old wounds before getting destroyed?
 		if (
-			bleeder
+			age
+			&& bleeder
 			&& HDPlayerPawn(bleeder)
-			&& (
-				age
-				&& CheckDestroy()
-			)
+			&& CheckDestroy()
+			&& avgstat < 15
 		) {
 			let hdp = HDPlayerPawn(bleeder);
 			hdp.oldwoundcount = max(hdp.oldwoundcount - random(2, 5), 0);
