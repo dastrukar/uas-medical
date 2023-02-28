@@ -194,22 +194,34 @@ extend class UaS_TraumaKit {
 		}
 
 		// Tool list
-		float toolListOffset = baseOffset + (4 * textHeight) + (6 * padStep);
-		string toolList = "";
+		float toolListSpacing = 24 * hudscale.x;
+		float toolListOffsetX = toolListSpacing * -3;
+		float toolListOffsetY = baseOffset + (4 * textHeight) + (6 * padStep);
 		for (int i = 0; i <= T_SCALPEL; i++) {
-			toolList = String.Format(
-				"%s%s%s%s",
-				toolList, (i != 0)? "   " : "", (weaponstatus[TK_SELECTED] == i)? "\c[white]" : "\c[darkgrey]", toolShortNames[i]
+			string toolName = String.Format(
+				"%s%s",
+				(i == weaponstatus[TK_SELECTED])? "\c[White]" : "\c[DarkGrey]", toolListNames[i]
 			);
-		}
+			float alpha = (i == weaponstatus[TK_SELECTED])? 0.75 : 0.50;
 
-		sb.DrawString(
-			sb.pSmallFont,
-			toolList,
-			(0, toolListOffset),
-			sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_CENTER,
-			scale: hudscale
-		);
+			sb.DrawImage(
+				toolListIcons[i],
+				(toolListOffsetX, toolListOffsetY),
+				sb.DI_SCREEN_CENTER | sb.DI_ITEM_CENTER,
+				alpha,
+				scale: hudscale
+			);
+			sb.DrawString(
+				sb.pSmallFont,
+				toolName,
+				(toolListOffsetX, toolListOffsetY),
+				sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_CENTER,
+				alpha: alpha,
+				scale: hudscale
+			);
+
+			toolListOffsetX += toolListSpacing;
+		}
 
 		// Tool info
 		float toolInfoOffset = baseOffset + (4 * textHeight) + (7 * padStep);
@@ -243,5 +255,6 @@ extend class UaS_TraumaKit {
 		return "\cj"; // White
 	}
 
-	static const string[] toolShortNames = { "AT", "SL", "FC", "BF", "SP", "ST", "SC" };
+	static const string[] toolListNames = { "AT", "SL", "FC", "BF", "SP", "ST", "SC" };
+	static const string[] toolListIcons = { "ANESTH", "BIOFOAM", "FORCEPS", "SALINE", "SCALPEL", "STAPLER", "SUTURE" };
 }

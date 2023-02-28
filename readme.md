@@ -11,3 +11,6 @@ side note: this is poorly fixed up, so do expect some weird bugs/inconsistency.
  - `UaS_WoundInfo` now replaces `HDBleedingWound`.
  - also renamed `UaS_WoundInfo` to `UaS_Wound`.
  - Cavity is based on the width of your wound.
+
+## Credits
+ - bunyear: Made the tool sprites
