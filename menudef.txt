@@ -6,14 +6,24 @@ AddOptionMenu "UaS_ConfigureModules" {
 	Submenu "Medical", "UaS_Medical_Options"
 }
 
-AddOptionMenu "UaS_Controls" {
-	Control "Use Traumakit", "use UaS_TraumaKit"
-	Control "Stabilize bandaged wounds", "use UaS_WoundStabilization"
-	StaticText " "
-}
-
 OptionMenu "UaS_Medical_Options" {
 	Title "Medical Module Settings"
 
-	Slider "TraumaKit UI Scale","UaS_TraumaKit_HUDScale", 0, 1, 0.05, 2
+	Slider "Trauma Kit UI Scale","UaS_TraumaKit_HUDScale", 0, 1, 0.05, 2
+
+	StaticText " "
+
+	Control "Use Trauma Kit", "use UaS_TraumaKit"
+	Control "Stabilize bandaged wounds", "use UaS_WoundStabilization"
+
+	StaticText " "
+	StaticText "= Trauma Kit Extra Controls =", "Gold"
+	Control "Switch to Anesthetic", "netevent UaS_TraumaKit_SwitchTo 0"
+	Control "Switch to Saline", "netevent UaS_TraumaKit_SwitchTo 1"
+	Control "Switch to Forceps", "netevent UaS_TraumaKit_SwitchTo 2"
+	Control "Switch to Biofoam", "netevent UaS_TraumaKit_SwitchTo 3"
+	Control "Switch to Stapler", "netevent UaS_TraumaKit_SwitchTo 4"
+	Control "Switch to Sutures", "netevent UaS_TraumaKit_SwitchTo 5"
+	Control "Switch to Scalpel", "netevent UaS_TraumaKit_SwitchTo 6"
+	StaticText " "
 }

@@ -1,0 +1,10 @@
+addkeysection "Ugly as Sin" UglyAsSin
+addmenukey "Use Trauma Kit" "use UaS_TraumaKit"
+addmenukey "Stabilize bandaged wounds" "use UaS_WoundStabilization"
+addmenukey "Switch to Anesthetic" "netevent UaS_TraumaKit_SwitchTo 0"
+addmenukey "Switch to Saline" "netevent UaS_TraumaKit_SwitchTo 1"
+addmenukey "Switch to Forceps" "netevent UaS_TraumaKit_SwitchTo 2"
+addmenukey "Switch to Biofoam" "netevent UaS_TraumaKit_SwitchTo 3"
+addmenukey "Switch to Stapler" "netevent UaS_TraumaKit_SwitchTo 4"
+addmenukey "Switch to Sutures" "netevent UaS_TraumaKit_SwitchTo 5"
+addmenukey "Switch to Scalpel" "netevent UaS_TraumaKit_SwitchTo 6"

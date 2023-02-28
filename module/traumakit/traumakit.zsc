@@ -76,6 +76,10 @@ class UaS_TraumaKit : HDWeapon {
 			case T_SCALPEL:
 				HandleScalpel();
 				break;
+			default:
+				weaponstatus[TK_SELECTED] = min(weaponstatus[TK_SELECTED], T_SCALPEL);
+				weaponstatus[TK_SELECTED] = max(weaponstatus[TK_SELECTED], 0);
+				break;
 		}
 
 		TickMessages();
