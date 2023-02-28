@@ -32,7 +32,7 @@ extend class UaS_TraumaKit {
 				owner.A_StartSound("bandage/rip",CHAN_WEAPON);
 				patient.damagemobj(owner,owner,5,"staples");
 				wh.AppendWound(HDBleedingWound.Inflict(patient, frandom(0.4, 2.4), frandom(0.6, 1.8), source: owner));
-				wh.owner.oldwoundcount += random(4, 6); // no cheesing
+				HDPlayerPawn(wh.owner).oldwoundcount += random(4, 6); // no cheesing
 				return;
 			}
 
