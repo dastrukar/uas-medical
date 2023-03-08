@@ -51,10 +51,12 @@ extend class UaS_TraumaKit {
 				(frandom[uas_tk](-1,1),frandom[uas_tk](1,2)),
 				(frandom[uas_tk](-1,1),frandom[uas_tk](1,1))
 			);
-			double newDepth = min(currentWound.open + frandom[uas_tk](0.5,2.0-currentWound.painkiller), 20.0);
+			//double newDepth = min(currentWound.open + frandom[uas_tk](0.5,2.0-currentWound.painkiller), 20.0);
+			double newDepth = min(currentWound.open + frandom[uas_tk](0.5,2.0), 20.0);
 			currentWound.sealed = max(currentWound.sealed - newDepth, 0);
 			currentWound.depth = newDepth;
-			currentWound.cavity = min(currentWound.cavity + frandom[uas_tk](0,2.0-(currentWound.painkiller/4)), 20.0);
+			//currentWound.cavity = min(currentWound.cavity + frandom[uas_tk](0,2.0-(currentWound.painkiller/4)), 20.0);
+			currentWound.cavity = min(currentWound.cavity + frandom[uas_tk](0,2.0), 20.0);
 			return;
 		}
 	}
