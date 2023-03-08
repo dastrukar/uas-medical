@@ -8,7 +8,7 @@ extend class UaS_TraumaKit {
 	}
 	override string gethelptext(){
 		string r;
-		if (UaS_Traumakit_AltControls.GetBool()) {
+		if (UaS_TraumaKit_AltControls && UaS_Traumakit_AltControls.GetBool()) {
 			r.AppendFormat(WEPHELP_RELOAD.."  Cycle wounds down\n");
 			r.AppendFormat(WEPHELP_ALTRELOAD.."  Cycle wounds up\n");
 			r.AppendFormat(WEPHELP_FIREMODE.."  Hold and ...\n");

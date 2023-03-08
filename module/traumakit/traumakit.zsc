@@ -159,7 +159,7 @@ class UaS_TraumaKit : HDWeapon {
 	void CycleTools(int set = -1) {
 		if (
 			(!UaS_TraumaKit_AltControls.GetBool() && owner.player.cmd.buttons & BT_FIREMODE)
-			|| (UaS_TraumaKit_AltControls.GetBool() && !owner.player.cmd.buttons & BT_FIREMODE)
+			|| !(UaS_TraumaKit_AltControls.GetBool() && owner.player.cmd.buttons & BT_FIREMODE)
 		) { return; }
 		if (set != -1) { weaponstatus[TK_SELECTED] = set; return; }
 		if ((owner.player.cmd.buttons & BT_RELOAD) && !(owner.player.oldbuttons & BT_RELOAD)) {
@@ -306,7 +306,6 @@ class UaS_TraumaKit : HDWeapon {
 						&& invoker.owner.player.cmd.buttons & BT_FIREMODE
 					)
 				) { return; }
-				invoker.CycleTools();
 				int selected = invoker.wheel.GetWheelInput(
 					(GetMouseX(true) * -1, GetMouseY(true) * -1).Unit(),
 					7, 200,
