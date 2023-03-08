@@ -244,8 +244,11 @@ extend class UaS_TraumaKit {
 
 
 		// experimental stuff
-		if (!(hpl.Player.cmd.Buttons & BT_FIREMODE) || !wheel)
-			return;
+		if (
+			!UaS_TraumaKit_AltControls
+			|| !(UaS_TraumaKit_AltControls.GetBool() && (hpl.Player.cmd.Buttons & BT_FIREMODE))
+			|| !wheel
+		) { return; }
 
 		wheel.DrawWheel(
 			weaponstatus[TK_SELECTED],
