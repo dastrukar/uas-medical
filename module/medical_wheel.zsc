@@ -1,0 +1,271 @@
+// W H E E L
+class UaS_MedicalWheel : Inventory {
+	Vector2 globalMotion; // used for drawing
+
+	int GetWheelInput(
+		Vector2 motion,
+		int itemCount,
+		double circleRadius,
+		Vector2 circlePos
+	) {
+		let hdp = HDPlayerPawn(owner);
+		if (!hdp) { return 0; }
+
+		//reactiontime = max(reactiontime, 1);
+		//hdp.lastcrossbob = hdp.crossbob;
+		//hdp.crossbob *= 0.8;
+
+		//let motion = (hdp.player.cmd.yaw * -1, hdp.player.cmd.pitch * -1);
+		//motion = motion.Unit();
+		globalMotion = motion;
+
+		float anglePerItem = 360.0 / itemCount;
+		float lineAngle = -90 + (anglePerItem / 2);
+		float prevLineAngle = lineAngle - anglePerItem;
+		Vector2 tl = (circlePos.x - circleRadius, circlePos.y - circleRadius);
+		Vector2 br = (circlePos.x + circleRadius, circlePos.y + circleRadius);
+
+		Vector2 point = (
+			circlePos.x + (circleRadius * motion.x),
+			circlePos.y + (circleRadius * motion.y)
+		);
+		Vector2 line0 = (
+			circlePos.x + (circleRadius * cos(prevLineAngle)),
+			circlePos.y + (circleRadius * sin(prevLineAngle))
+		);
+		int selected = -1;
+		for (int i = 0; i < itemCount; i++)
+		{
+			Vector2 line1 = (
+				circlePos.x + (circleRadius * cos(lineAngle)),
+				circlePos.y + (circleRadius * sin(lineAngle))
+			);
+
+			if (
+				line0.y != line1.y
+				&& (
+					(
+						line1.x < circlePos.x
+						&& !(
+							line0.x == tl.x || line0.y == tl.y
+							|| line0.x == br.x || line0.y == br.y
+						)
+					)
+					|| (line1.x >= circlePos.x && line1.x >= line0.x)
+				)
+			) {
+				line1.x = circlePos.x + ((line1.x < circlePos.x)? -circleRadius : circleRadius);
+			}
+
+			if (
+				line0.x != line1.x
+				&& (
+					(line1.x < circlePos.x && line1.y >= line0.y)
+					|| (line1.x >= circlePos.x && line1.y <= line0.y)
+				)
+			) {
+				line1.y = circlePos.y + ((line1.y < circlePos.y)? -circleRadius : circleRadius);
+			}
+
+			bool wow = (
+				(
+					line0.y == line1.y && CheckSide(line0.y, line1.y, circlePos.y, point.y)
+					&& (
+						(line0.x <= line1.x && point.x >= line0.x && point.x <= line1.x)
+						|| (line0.x >= line1.x && point.x >= line1.x && point.x <= line0.x)
+					)
+				)
+				|| (
+					(
+						(line0.x <= line1.x && point.x >= line0.x && point.x <= line1.x)
+						|| (line0.x >= line1.x && point.x >= line1.x && point.x <= line0.x)
+					)
+					&& (
+						(line0.y < line1.y && point.y >= line0.y && point.y <= line1.y)
+						|| (line0.y >= line1.y && point.y >= line1.y && point.y <= line0.y)
+					)
+				)
+			);
+
+			if (wow)
+			{
+				selected = i;
+				break;
+			}
+
+			line0 = (line1.x, line1.y);
+			prevLineAngle = lineAngle;
+			lineAngle += anglePerItem;
+		}
+
+		return selected;
+	}
+
+	ui void DrawWheel(
+		int selected,
+		int itemCount,
+		Array<String> itemIcons,
+		double circleRadius,
+		Vector2 circlePos
+	) {
+		let hdp = HDPlayerPawn(Owner);
+		if (!hdp) { return; }
+
+		let circleTexture = TexMan.CheckForTexture("circlebg");
+		Screen.DrawTexture(
+			circleTexture, false,
+			circlePos.x ,
+			circlePos.y,
+			DTA_ALPHA, 0.5,
+			DTA_CENTEROFFSET, true
+		);
+
+		float anglePerItem = 360.0 / itemCount;
+		float lineAngle = -90 + anglePerItem / 2;
+		for (int i = 0; i < itemCount; i++) {
+			bool lineSelected = (
+				(i == itemCount - 1 && 0 == selected)
+				|| (i < itemCount - 1 && i + 1 == selected)
+				|| i == selected
+			);
+			Vector2 lineTo = (
+				circlePos.x + (circleRadius * cos(lineAngle)),
+				circlePos.y + (circleRadius * sin(lineAngle))
+			);
+
+			if (i < itemIcons.Size()) {
+				let itemTexture = TexMan.CheckForTexture(itemIcons[i]);
+				Screen.DrawTexture(
+					itemTexture, false,
+					circlePos.x + (circleRadius / 2 * cos(lineAngle - anglePerItem / 2)),
+					circlePos.y + (circleRadius / 2 * sin(lineAngle - anglePerItem / 2)),
+					DTA_ALPHA, (i == selected)? 0.75 : 0.50,
+					DTA_CENTEROFFSET, true,
+					DTA_SCALEX, 2,
+					DTA_SCALEY, 2
+				);
+			}
+			Screen.DrawLine(
+				circlePos.x,
+				circlePos.y,
+				lineTo.x,
+				lineTo.y,
+				(lineSelected)? "gold" : "white"
+			);
+
+			lineAngle += anglePerItem;
+		}
+
+		// Draw Pointer
+		Vector2 lineTo = (
+			circlePos.x + (circleRadius * globalMotion.x),
+			circlePos.y + (circleRadius * globalMotion.y)
+		);
+		Screen.DrawLine(
+			circlePos.x,
+			circlePos.y,
+			lineTo.x,
+			lineTo.y,
+			"green"
+		);
+	}
+
+	ui void DrawHitboxes(Vector2 line0, Vector2 line1, bool selected) {
+		// box
+		Screen.DrawLine(
+			line0.x,
+			line0.y,
+			line0.x,
+			line1.y,
+			(selected)? "gold" : "red"
+		);
+		Screen.DrawLine(
+			line0.x,
+			line1.y,
+			line1.x,
+			line1.y,
+			(selected)? "gold" : "red"
+		);
+		Screen.DrawLine(
+			line0.x,
+			line0.y,
+			line1.x,
+			line0.y,
+			(selected)? "gold" : "red"
+		);
+		Screen.DrawLine(
+			line1.x,
+			line0.y,
+			line1.x,
+			line1.y,
+			(selected)? "gold" : "red"
+		);
+	}
+
+	ui void DrawBorder(Vector2 br, Vector2 tl) {
+		// border
+		Screen.DrawLine(
+			br.x,
+			br.y,
+			br.x,
+			tl.y,
+			"green"
+		);
+		Screen.DrawLine(
+			br.x,
+			br.y,
+			tl.x,
+			br.y,
+			"green"
+		);
+		Screen.DrawLine(
+			tl.x,
+			tl.y,
+			br.x,
+			tl.y,
+			"green"
+		);
+		Screen.DrawLine(
+			tl.x,
+			tl.y,
+			tl.x,
+			br.y,
+			"green"
+		);
+	}
+
+	// center would be equal to either circlePos.x or circlePos.y
+	// pos0 or pos1 would be equal to line.x or line.y
+	// point == point.x or point.y
+	// Checks if point is on the same side as posX
+	clearscope bool CheckSide(float pos0, float pos1, float center, float point)
+	{
+		bool leftRight = (pos0 <= pos1);
+		bool inRange = (
+			(
+				leftRight
+				&& point >= pos0 && point <= pos1
+			)
+			|| (
+				!leftRight
+				&& point >= pos1 && point <= pos0
+			)
+		);
+		return (
+			(
+				pos0 <= pos1
+				&& (
+					pos0 >= center && point >= center
+					|| pos0 <= center && point <= center
+				)
+			)
+			|| (
+				pos1 <= pos0
+				&& (
+					pos1 >= center && point >= center
+					|| pos1 <= center && point <= center
+				)
+			)
+		);
+	}
+}

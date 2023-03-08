@@ -26,6 +26,9 @@ class UaS_Medical_Bootstrap : EventHandler {
 			if (!p.mo.countinv("UaS_WoundHandler")) {
 				p.mo.giveinventory("UaS_WoundHandler", 1);
 			}
+			if (!p.mo.countinv("UaS_MedicalWheel")) {
+				p.mo.giveinventory("UaS_MedicalWheel", 1);
+			}
 		}
 	}
 }

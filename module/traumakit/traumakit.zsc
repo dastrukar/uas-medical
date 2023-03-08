@@ -5,6 +5,7 @@ class UaS_TraumaKit : HDWeapon {
 	StatusInfo currentMessage;
 	UaS_Wound currentWound;
 	UaS_WoundHandler wh;
+	UaS_MedicalWheel wheel;
 	HDPlayerPawn patient, lastpatient;
 
 	Default {
@@ -48,6 +49,7 @@ class UaS_TraumaKit : HDWeapon {
 		if (!(owner.player.readyweapon is 'UaS_TraumaKit')) { return; }
 		statusMessage = ""; // This is used for tools to display stuff
 
+		if (!wheel) { wheel = UaS_MedicalWheel(owner.FindInventory("UaS_MedicalWheel")); }
 		SetHelpText();
 		SetPatient();
 		CycleWounds();
@@ -136,7 +138,8 @@ class UaS_TraumaKit : HDWeapon {
 		if (wh.critwounds.size() == 0) { return; }
 		int idx = 0;
 		if (currentWound) { idx = wh.critwounds.Find(currentWound); }
-		if (!(owner.player.cmd.buttons & BT_FIREMODE)) { return; }
+		//if (!(owner.player.cmd.buttons & BT_FIREMODE)) { return; }
+		if (owner.player.cmd.buttons & BT_FIREMODE) { return; }
 		if ((owner.player.cmd.buttons & BT_RELOAD) && !(owner.player.oldbuttons & BT_RELOAD)) {
 			idx = (idx + 1) % wh.critwounds.size();
 		}
@@ -148,8 +151,10 @@ class UaS_TraumaKit : HDWeapon {
 	}
 
 	void CycleTools(int set = -1) {
-		if ((owner.player.cmd.buttons & BT_FIREMODE)) { return; }
+		//if ((owner.player.cmd.buttons & BT_FIREMODE)) { return; }
+		if (!(owner.player.cmd.buttons & BT_FIREMODE)) { return; }
 		if (set != -1) { weaponstatus[TK_SELECTED] = set; return; }
+		//WheelCycle();
 		if ((owner.player.cmd.buttons & BT_RELOAD) && !(owner.player.oldbuttons & BT_RELOAD)) {
 			weaponstatus[TK_SELECTED] = (weaponstatus[TK_SELECTED] + 1) % 7;
 			weaponstatus[TK_HOLD] = 0;
@@ -162,6 +167,101 @@ class UaS_TraumaKit : HDWeapon {
 			weaponstatus[TK_HOLD] = 0;
 			currentmessage.text = "";
 			currentmessage.timeout = 0;
+		}
+	}
+
+	Vector2 debugMotion;
+
+	void WheelCycle()
+	{
+		let hdp = HDPlayerPawn(owner);
+		if (!hdp)
+			return;
+
+		// Hijack input
+		reactiontime = max(reactiontime, 1);
+		hdp.lastcrossbob = hdp.crossbob;
+		hdp.crossbob *= 0.8;
+
+		let motion = (hdp.player.cmd.yaw * -1, hdp.player.cmd.pitch * -1);
+		motion = motion.Unit();
+		debugMotion = motion;
+
+		int itemCount = 7;
+		Vector2 circlePos = (Screen.GetWidth() / 2, Screen.GetHeight() / 2);
+		float circleRadius = 200;
+		float anglePerItem = 360.0 / itemCount;
+		float lineAngle = -90 + (anglePerItem / 2);
+		float prevLineAngle = lineAngle - anglePerItem;
+		Vector2 tl = (circlePos.x - circleRadius, circlePos.y - circleRadius);
+		Vector2 br = (circlePos.x + circleRadius, circlePos.y + circleRadius);
+		Vector2 line0 = (
+			circlePos.x + (circleRadius * cos(prevLineAngle)),
+			circlePos.y + (circleRadius * sin(prevLineAngle))
+		);
+		for (int i = 0; i < itemCount; i++)
+		{
+			Vector2 line1 = (
+				circlePos.x + (circleRadius * cos(lineAngle)),
+				circlePos.y + (circleRadius * sin(lineAngle))
+			);
+			if (
+				line0.y != line1.y
+				&& (
+					(line1.x < circlePos.x
+						&& !(
+							line0.x == tl.x
+							|| line0.y == tl.y
+							|| line0.x == br.x
+							|| line0.y == br.y
+						)
+					)
+					|| (line1.x >= circlePos.x && line1.x >= line0.x)
+				)
+			) {
+				line1.x = circlePos.x + ((line1.x < circlePos.x)? -circleRadius : circleRadius);
+			}
+			if (
+				line0.x != line1.x
+				&& (
+					(line1.x < circlePos.x && line1.y >= line0.y)
+					|| (line1.x >= circlePos.x && line1.y <= line0.y)
+				)
+			) {
+				line1.y = circlePos.y + ((line1.y < circlePos.y)? -circleRadius : circleRadius);
+			}
+			Vector2 point = (
+				circlePos.x + (circleRadius * motion.x),
+				circlePos.y + (circleRadius * motion.y)
+			);
+			bool wow = (
+				(
+					line0.y == line1.y && CheckSide(line0.y, line1.y, circlePos.y, point.y)
+					&& (
+						(line0.x <= line1.x && point.x >= line0.x && point.x <= line1.x)
+						|| (line0.x >= line1.x && point.x >= line1.x && point.x <= line0.x)
+					)
+				)
+				|| (
+					(
+						(line0.x <= line1.x && point.x >= line0.x && point.x <= line1.x)
+						|| (line0.x >= line1.x && point.x >= line1.x && point.x <= line0.x)
+					)
+					&& (
+						(line0.y < line1.y && point.y >= line0.y && point.y <= line1.y)
+						|| (line0.y >= line1.y && point.y >= line1.y && point.y <= line0.y)
+					)
+				)
+			);
+			if (wow)
+			{
+				weaponstatus[TK_SELECTED] = i;
+				break;
+			}
+
+			line0 = (line1.x, line1.y);
+			prevLineAngle = lineAngle;
+			lineAngle += anglePerItem;
 		}
 	}
 
@@ -185,6 +285,23 @@ class UaS_TraumaKit : HDWeapon {
 		statusMessage = statusMessage.."Unstable Wounds "..patient.unstablewoundcount.."\n";
 		*/
 		statusMessage = statusMessage.."Old Wounds "..patient.oldwoundcount.."\n";
+	}
+
+	// using states, because i can't figure out how to get mouse input without hdest's GetMouse functions
+	States {
+		Ready:
+			TNT1 A 1 {
+				A_WeaponReady();
+				if (!(invoker.owner.player.cmd.buttons & BT_FIREMODE)) { return; }
+				invoker.CycleTools();
+				int selected = invoker.wheel.GetWheelInput(
+					(GetMouseX(true) * -1, GetMouseY(true) * -1).Unit(),
+					7, 200,
+					(Screen.GetWidth() / 2, Screen.GetHeight() / 2)
+				);
+				if (selected != -1) { invoker.weaponstatus[TK_SELECTED] = selected; return; }
+			}
+			goto ReadyEnd;
 	}
 
 	struct StatusInfo {
