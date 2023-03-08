@@ -8,11 +8,19 @@ extend class UaS_TraumaKit {
 	}
 	override string gethelptext(){
 		string r;
-		r.AppendFormat(WEPHELP_RELOAD.."  Cycle tools forward\n");
-		r.AppendFormat(WEPHELP_ALTRELOAD.."  Cycle tools backward\n");
-		r.AppendFormat(WEPHELP_FIREMODE.."  Hold and ...\n");
-		r.AppendFormat("  +"..WEPHELP_RELOAD.."  Cycle wounds down\n");
-		r.AppendFormat("  +"..WEPHELP_ALTRELOAD.."  Cycle wounds up\n");
+		if (UaS_Traumakit_AltControls.GetBool()) {
+			r.AppendFormat(WEPHELP_RELOAD.."  Cycle wounds down\n");
+			r.AppendFormat(WEPHELP_ALTRELOAD.."  Cycle wounds up\n");
+			r.AppendFormat(WEPHELP_FIREMODE.."  Hold and ...\n");
+			r.AppendFormat("  +"..WEPHELP_RELOAD.."  Cycle tools forward\n");
+			r.AppendFormat("  +"..WEPHELP_ALTRELOAD.."  Cycle tools backward\n");
+		} else {
+			r.AppendFormat(WEPHELP_RELOAD.."  Cycle tools forward\n");
+			r.AppendFormat(WEPHELP_ALTRELOAD.."  Cycle tools backward\n");
+			r.AppendFormat(WEPHELP_FIREMODE.."  Hold and ...\n");
+			r.AppendFormat("  +"..WEPHELP_RELOAD.."  Cycle wounds down\n");
+			r.AppendFormat("  +"..WEPHELP_ALTRELOAD.."  Cycle wounds up\n");
+		}
 		r.AppendFormat(WEPHELP_ZOOM.."  Treat another player\n");
 		r.AppendFormat(WEPHELP_DROPONE.."  Drop some excess supplies\n\n");
 
