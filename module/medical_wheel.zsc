@@ -11,12 +11,6 @@ class UaS_MedicalWheel : Inventory {
 		let hdp = HDPlayerPawn(owner);
 		if (!hdp) { return 0; }
 
-		//reactiontime = max(reactiontime, 1);
-		//hdp.lastcrossbob = hdp.crossbob;
-		//hdp.crossbob *= 0.8;
-
-		//let motion = (hdp.player.cmd.yaw * -1, hdp.player.cmd.pitch * -1);
-		//motion = motion.Unit();
 		globalMotion = motion;
 
 		float anglePerItem = 360.0 / itemCount;
@@ -41,6 +35,8 @@ class UaS_MedicalWheel : Inventory {
 				circlePos.y + (circleRadius * sin(lineAngle))
 			);
 
+			// Try to expand the detection area to the border for the item
+			// This is done to make sure stuff actually gets selected properly
 			if (
 				line0.y != line1.y
 				&& (
@@ -67,7 +63,7 @@ class UaS_MedicalWheel : Inventory {
 				line1.y = circlePos.y + ((line1.y < circlePos.y)? -circleRadius : circleRadius);
 			}
 
-			bool wow = (
+			bool isSelected = (
 				(
 					line0.y == line1.y && CheckSide(line0.y, line1.y, circlePos.y, point.y)
 					&& (
@@ -87,7 +83,7 @@ class UaS_MedicalWheel : Inventory {
 				)
 			);
 
-			if (wow)
+			if (isSelected)
 			{
 				selected = i;
 				break;
