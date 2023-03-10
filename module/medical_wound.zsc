@@ -1,3 +1,7 @@
+// Info about values:
+// ------------------
+// depth + patched = open (depth only affects whether you actually bleed or not)
+
 class UaS_Wound : HDBleedingWound {
 	string description;
 	int painkiller;
@@ -35,7 +39,7 @@ class UaS_Wound : HDBleedingWound {
 		pain = max(pain - 1, 0);
 		pain = max(pain - painkiller / 20, 0);
 
-		if (avgstat < 15) { regenrate = (avgstat <= 0)? 0.5 : 0.5 * (15 - avgstat) / 15; }
+		if (avgstat < 15) { regenrate = (avgstat <= 0)? 0.25 : 0.25 * (15 - avgstat) / 15; }
 		else { regenrate = 0; }
 
 		if (timer <= 0) {
@@ -106,7 +110,7 @@ extend class UaS_Wound {
 		int depthmin = clamp(hdbw.depth * 10, 0, 100);
 		int depthmax = clamp(hdbw.depth * 20, 0, 100);
 
-		UaS_Wound nw = new("UaS_Wound");
+		let nw = UaS_Wound(new("UaS_Wound"));
 
 		nw.painkiller = 0;
 		nw.dirty = max(-1, randompick[uas_wi](-1, 1, 1, 1) * random[uas_wi](depthmin, depthmax));
