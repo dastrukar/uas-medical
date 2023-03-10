@@ -144,8 +144,10 @@ class UaS_TraumaKit : HDWeapon {
 		if (wh.critwounds.size() == 0) { return; }
 		int idx = 0;
 		if (currentWound) { idx = wh.critwounds.Find(currentWound); }
-		if (!UaS_TraumaKit_AltControls.GetBool() && !(owner.player.cmd.buttons & BT_FIREMODE)) { return; }
-		if (owner.player.cmd.buttons & BT_FIREMODE) { return; }
+		if (
+			(!UaS_TraumaKit_AltControls.GetBool() && !(owner.player.cmd.buttons & BT_FIREMODE))
+			|| (UaS_TraumaKit_AltControls.GetBool() && (owner.player.cmd.buttons & BT_FIREMODE))
+		) { return; }
 		if ((owner.player.cmd.buttons & BT_RELOAD) && !(owner.player.oldbuttons & BT_RELOAD)) {
 			idx = (idx + 1) % wh.critwounds.size();
 		}
@@ -158,8 +160,8 @@ class UaS_TraumaKit : HDWeapon {
 
 	void CycleTools(int set = -1) {
 		if (
-			(!UaS_TraumaKit_AltControls.GetBool() && owner.player.cmd.buttons & BT_FIREMODE)
-			|| !(UaS_TraumaKit_AltControls.GetBool() && owner.player.cmd.buttons & BT_FIREMODE)
+			(!UaS_TraumaKit_AltControls.GetBool() && (owner.player.cmd.buttons & BT_FIREMODE))
+			|| (UaS_TraumaKit_AltControls.GetBool() && !(owner.player.cmd.buttons & BT_FIREMODE))
 		) { return; }
 		if (set != -1) { weaponstatus[TK_SELECTED] = set; return; }
 		if ((owner.player.cmd.buttons & BT_RELOAD) && !(owner.player.oldbuttons & BT_RELOAD)) {
