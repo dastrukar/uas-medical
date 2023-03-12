@@ -205,7 +205,7 @@ class UaS_TraumaKit : HDWeapon {
 	States {
 		Ready:
 			TNT1 A 1 {
-				A_WeaponReady(WRF_ALLOWUSER4);
+				A_WeaponReady(WRF_ALLOWUSER3);
 				if (
 					!invoker.UaS_TraumaKit_AltControls
 					|| !(
