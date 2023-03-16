@@ -38,6 +38,13 @@ class UaS_WoundStabilization : HDWeapon {
 		A_WeaponMessage(statusMessage);
 	}
 
+	// this is the most dumbest code i've ever written in my life. -dastrukar
+	override void DrawHUDStuff(HDStatusbar sb, HDWeapon hdw, HDPlayerPawn hpl) {
+		let bandage = SelfBandage(hpl.FindInventory("SelfBandage"));
+		if (!bandage) { return; }
+		bandage.DrawHUDStuff(sb, hdw, hpl);
+	}
+
 	// Criteria is currently just "wound must be fully bandaged"
 	UaS_Wound GetBandagedWound()
 	{
