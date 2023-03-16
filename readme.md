@@ -9,6 +9,7 @@ side note: this is poorly fixed up, so do expect some weird bugs/inconsistency.
  - Trauma kit now has a tool list.
  - Fixed wounds will heal some tissue damage. (fixing with 2f will also do this, so i might have to change that)
  - **: W H E E L :** The trauma kit now has an item wheel for your tool switching needs.
+ - Wound Stabiliser now has an indicator to let you know if you're bleeding. (same as the bandage)
 
 ## Technical changes
  - `UaS_WoundInfo` now replaces `HDBleedingWound`.
