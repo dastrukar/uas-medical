@@ -1,2 +1,3 @@
 nosave bool UaS_Medical_Debug = false;
 user bool UaS_TraumaKit_AltControls = false;
+user bool UaS_TraumaKit_InvertCycle = false;

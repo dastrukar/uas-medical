@@ -11,6 +11,7 @@ OptionMenu "UaS_Medical_Options" {
 
 	Slider "Trauma Kit UI Scale","UaS_TraumaKit_HUDScale", 0, 1, 0.05, 2
 	StaticText " "
+	Option "Invert Trauma Kit Cycling","UaS_TraumaKit_InvertCycle", "YesNo"
 	StaticText "Use firemode to change tools instead (item wheel included)", "White"
 	Option "Use Alternative Trauma Kit Controls","UaS_TraumaKit_AltControls", "YesNo"
 
