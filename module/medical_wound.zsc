@@ -16,6 +16,10 @@ class UaS_Wound : HDBleedingWound {
 	double cavity; // cavity and width can't be the same, as width determines bleedrate
 	bool stabilised;
 
+	// Bandage related values
+	double pressure;
+	double tightness;
+
 	override void Tick() {
 		// Heal some old wounds before getting destroyed?
 		if (

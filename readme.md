@@ -16,5 +16,21 @@ side note: this is poorly fixed up, so do expect some weird bugs/inconsistency.
  - also renamed `UaS_WoundInfo` to `UaS_Wound`.
  - Cavity is based on the width of your wound.
 
+## Bandage Overhaul
+many changes, so this is getting its own section.
+
+### Bandages
+There are now 2 types of bandages: Improvised and Normal
+Improvised is the default vanilla bandages. They are slow and not that great, and should be only used if you don't have any normal bandages to spare.
+Normal is the new bandages that you have to find.
+
+### Wound Dressings
+Can be applied to wounds. Helps apply pressure to wounds, allowing them to stabilise faster.
+Has to be bandaged up to actually work, and increases bandaging time.
+
+ - Removed Wound Stabiliser, replaced with a more complicating bandaging system.
+ - Improvised bandaging is now actually just improvised bandaging.
+ - Added bandages, used for bandaging wounds more efficiently.
+
 ## Credits
  - bunyear/Tapwave: Made the tool sprites

@@ -1,3 +1,99 @@
 // AHHHHHHH, I NEED A MEDIC BAG
 class UaS_SelfBandage : SelfBandage {
+	int progress;
+	int timer;
+	int timeout;
+
+	override void PostBeginPlay() {
+		Super.PostBeginPlay();
+		weaponstatus[0] = TYPE_BANDAGE;
+		timer = 0;
+		progress = 0;
+	}
+
+	override void DoEffect() {
+		if (!(owner.player.ReadyWeapon is "UaS_SelfBandage")) { return; }
+		if (timer >= 0) { --timer; }
+		if (timeout >= 0) { --timeout; }
+		if (timeout <= 0) {
+			timer = 0;
+			progress = 0;
+		}
+
+		if (
+			timer <= 0
+			&& owner.player.cmd.buttons & BT_FIREMODE
+			&& !(owner.player.oldbuttons & BT_FIREMODE)
+		) { ++weaponstatus[0]; }
+		if (weaponstatus[0] > TYPE_BANDAGE) { weaponstatus[0] = TYPE_IMPROVISED; }
+	}
+
+	override void DrawHUDStuff(HDStatusBar sb, HDWeapon hdw, HDPlayerPawn hpl) {
+		Screen.DrawText(
+			NewSmallFont,
+			OptionMenuSettings.mFontColorValue,
+			10, Screen.GetHeight() * 2 / 3,
+			"type: "..weaponstatus[0].." | timer: "..timer.." | progress: "..progress.." | timeout: "..timeout
+		);
+		Super.DrawHUDStuff(sb, hdw, hpl);
+	}
+
+	action void A_BandageEffect(int min, int max) {
+		invoker.timer = Random(min, max);
+		A_MuzzleClimb(FRandom(-1.5, 1.8), FRandom(-2.4, 2.4));
+		A_StartSound("bandage/rustle", CHAN_BODY, CHANF_OVERLAP);
+	}
+
+	action void A_TryBandage() {
+		switch (invoker.weaponstatus[0]) {
+			case TYPE_BANDAGE:
+				HandleBandage();
+				break;
+		}
+	}
+
+	action void HandleBandage() {
+		if (invoker.timer <= 0 && invoker.timeout <= 0) {
+			invoker.timeout = 2;
+			invoker.progress = 0;
+			A_BandageEffect(5, 10);
+			A_StartSound("bandage/rip", CHAN_WEAPON, CHANF_OVERLAP, 0.4);
+			return;
+		}
+		invoker.timeout = 2;
+		if (invoker.timer <= 0 && invoker.timeout > 0) { ++invoker.progress; }
+		else { return; }
+		switch (invoker.progress) {
+			case 1:
+				A_BandageEffect(20, 30);
+				break;
+
+			case 2:
+				A_BandageEffect(20, 25);
+				break;
+
+			case 3:
+				invoker.BandageWound(FRandom(20, 30), self);
+				invoker.progress = 1;
+				A_BandageEffect(5, 10);
+				A_ChangeVelocity(FRandom(-0.3, 0.3), FRandom(-0.3, 0.3), FRandom(-1, 2));
+				break;
+		}
+	}
+
+	States {
+		Try:
+			TNT1 A 0 A_JumpIf(invoker.weaponstatus[0] != TYPE_IMPROVISED, "OverrideTry");
+			goto Super::Try;
+
+		OverrideTry:
+			TNT1 A 0 A_JumpIf(IsMoving.Count(self) >= 4, "Abort");
+			TNT1 A 0 A_TryBandage();
+			goto Ready;
+	}
+
+	enum BandageTypes {
+		TYPE_IMPROVISED,
+		TYPE_BANDAGE,
+	};
 }
