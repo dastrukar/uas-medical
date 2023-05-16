@@ -177,18 +177,27 @@ class UaS_TraumaKit : HDWeapon {
 			|| (UaS_TraumaKit_AltControls.GetBool() && !(owner.player.cmd.buttons & BT_FIREMODE))
 		) { return; }
 		if (set != -1) { weaponstatus[TK_SELECTED] = set; return; }
-		if (GetCycleInput() == 1) {
-			weaponstatus[TK_SELECTED] = (weaponstatus[TK_SELECTED] + 1) % 7;
-			weaponstatus[TK_HOLD] = 0;
-			currentmessage.text = "";
-			currentmessage.timeout = 0;
+		if (!UaS_TraumaKit_AltControls.GetBool()) {
+			if (GetCycleInput() == 1) {
+				weaponstatus[TK_SELECTED] = (weaponstatus[TK_SELECTED] + 1) % 7;
+				weaponstatus[TK_HOLD] = 0;
+				currentmessage.text = "";
+				currentmessage.timeout = 0;
+			}
+			else if (GetCycleInput() == -1) {
+				weaponstatus[TK_SELECTED] = (weaponstatus[TK_SELECTED] - 1);
+				if(weaponstatus[TK_SELECTED] < 0) { weaponstatus[TK_SELECTED] = 6; }
+				weaponstatus[TK_HOLD] = 0;
+				currentmessage.text = "";
+				currentmessage.timeout = 0;
+			}
 		}
-		else if (GetCycleInput() == -1) {
-			weaponstatus[TK_SELECTED] = (weaponstatus[TK_SELECTED] - 1);
-			if(weaponstatus[TK_SELECTED] < 0) { weaponstatus[TK_SELECTED] = 6; }
-			weaponstatus[TK_HOLD] = 0;
-			currentmessage.text = "";
-			currentmessage.timeout = 0;
+		else {
+			int selected = wheel.GetWheelInput(
+				7, 200,
+				(Screen.GetWidth() / 2, Screen.GetHeight() / 2)
+			);
+			if (selected != -1) { weaponstatus[TK_SELECTED] = selected; }
 		}
 	}
 
@@ -212,29 +221,6 @@ class UaS_TraumaKit : HDWeapon {
 		statusMessage = statusMessage.."Unstable Wounds "..patient.unstablewoundcount.."\n";
 		*/
 		statusMessage = statusMessage.."Old Wounds "..patient.oldwoundcount.."\n";
-	}
-
-	// using states, because i can't figure out how to get mouse input without hdest's GetMouse functions
-	States {
-		Ready:
-			TNT1 A 1 {
-				A_WeaponReady(WRF_ALLOWUSER3);
-				if (
-					!invoker.UaS_TraumaKit_AltControls
-					|| !(
-						invoker.UaS_TraumaKit_AltControls.GetBool()
-						&& invoker.owner.player.cmd.buttons & BT_FIREMODE
-					)
-				) { return; }
-
-				int selected = invoker.wheel.GetWheelInput(
-					(GetMouseX(true) * -1, GetMouseY(true) * -1).Unit(),
-					7, 200,
-					(Screen.GetWidth() / 2, Screen.GetHeight() / 2)
-				);
-				if (selected != -1) { invoker.weaponstatus[TK_SELECTED] = selected; return; }
-			}
-			goto ReadyEnd;
 	}
 
 	struct StatusInfo {
