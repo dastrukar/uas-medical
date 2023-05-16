@@ -51,7 +51,6 @@ class UaS_MedicalWheel : Inventory {
 
 	int GetWheelInput(
 		int itemCount,
-		double circleRadius,
 		Vector2 circlePos
 	) {
 		let hdp = HDPlayerPawn(owner);
@@ -77,19 +76,17 @@ class UaS_MedicalWheel : Inventory {
 		float anglePerItem = 360.0 / itemCount;
 		float lineAngle = -90 + (anglePerItem / 2);
 		float prevLineAngle = lineAngle - anglePerItem;
-		Vector2 tl = (circlePos.x - circleRadius, circlePos.y - circleRadius);
-		Vector2 br = (circlePos.x + circleRadius, circlePos.y + circleRadius);
 
 		Vector2 line0 = (
-			circlePos.x + (circleRadius * cos(prevLineAngle)),
-			circlePos.y + (circleRadius * sin(prevLineAngle))
+			circlePos.x + cos(prevLineAngle),
+			circlePos.y + sin(prevLineAngle)
 		);
 		int selected = -1;
 		for (int i = 0; i < itemCount; i++) {
 			// Get next line
 			Vector2 line1 = (
-				circlePos.x + (circleRadius * cos(lineAngle)),
-				circlePos.y + (circleRadius * sin(lineAngle))
+				circlePos.x + cos(lineAngle),
+				circlePos.y + sin(lineAngle)
 			);
 
 			// Check if pointer is in between the two lines
