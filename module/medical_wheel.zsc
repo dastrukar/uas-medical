@@ -110,19 +110,23 @@ class UaS_MedicalWheel : Inventory {
 		int selected,
 		int itemCount,
 		Array<String> itemIcons,
-		double circleRadius,
 		Vector2 circlePos
 	) {
 		let hdp = HDPlayerPawn(Owner);
 		if (!hdp) { return; }
 
+		double circleRadius = Screen.GetHeight() / 3 * UaS_Wheel_Scale;
+		double circleDiameter = circleRadius * 2;
+		double wheelScale = circleDiameter / 400; // the wheel texture size is 400x400 px
 		let circleTexture = TexMan.CheckForTexture("circlebg");
 		Screen.DrawTexture(
 			circleTexture, false,
 			circlePos.x,
 			circlePos.y,
-			DTA_ALPHA, 0.5,
-			DTA_CENTEROFFSET, true
+			DTA_ALPHA, UaS_Wheel_Alpha,
+			DTA_CENTEROFFSET, true,
+			DTA_SCALEX, wheelScale,
+			DTA_SCALEY, wheelScale
 		);
 
 		float anglePerItem = 360.0 / itemCount;
@@ -146,8 +150,8 @@ class UaS_MedicalWheel : Inventory {
 					circlePos.y + (circleRadius / 2 * sin(lineAngle - anglePerItem / 2)),
 					DTA_ALPHA, (i == selected)? 0.75 : 0.50,
 					DTA_CENTEROFFSET, true,
-					DTA_SCALEX, 2,
-					DTA_SCALEY, 2
+					DTA_SCALEX, 2 * wheelScale,
+					DTA_SCALEY, 2 * wheelScale
 				);
 			}
 			Screen.DrawLine(

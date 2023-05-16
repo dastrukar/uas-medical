@@ -9,8 +9,12 @@ AddOptionMenu "UaS_ConfigureModules" {
 OptionMenu "UaS_Medical_Options" {
 	Title "Medical Module Settings"
 
-	Slider "Trauma Kit UI Scale","UaS_TraumaKit_HUDScale", 0, 1, 0.05, 2
+	Slider "Trauma Kit UI Scale","UaS_TraumaKit_HUDScale", 0, 2, 0.05, 2
+	Slider "Item Wheel UI Scale","UaS_Wheel_Scale", 0, 2, 0.05, 2
+	Slider "Item Wheel BG Alpha","UaS_Wheel_Alpha", 0, 1, 0.05, 2
+
 	StaticText " "
+
 	Option "Invert Trauma Kit Cycling","UaS_TraumaKit_InvertCycle", "YesNo"
 	StaticText "Use firemode to change tools instead (item wheel included)", "White"
 	Option "Use Alternative Trauma Kit Controls","UaS_TraumaKit_AltControls", "YesNo"
@@ -21,6 +25,7 @@ OptionMenu "UaS_Medical_Options" {
 	Control "Stabilize bandaged wounds", "use UaS_WoundStabilization"
 
 	StaticText " "
+
 	StaticText "= Trauma Kit Extra Controls =", "Gold"
 	Control "Switch to Anesthetic", "netevent UaS_TraumaKit_SwitchTo 0"
 	Control "Switch to Saline", "netevent UaS_TraumaKit_SwitchTo 1"
