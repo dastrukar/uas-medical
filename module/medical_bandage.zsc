@@ -13,6 +13,7 @@ class UaS_SelfBandage : SelfBandage {
 
 	override void DoEffect() {
 		if (!(owner.player.ReadyWeapon is "UaS_SelfBandage")) { return; }
+		wepmsg = "";
 		if (timer >= 0) { --timer; }
 		if (timeout >= 0) { --timeout; }
 		if (timeout <= 0) {
@@ -29,17 +30,51 @@ class UaS_SelfBandage : SelfBandage {
 	}
 
 	override void DrawHUDStuff(HDStatusBar sb, HDWeapon hdw, HDPlayerPawn hpl) {
+		// Draw Weapon Status
+		Super.DrawHUDStuff(sb, hdw, hpl);
+
+		// debug
 		Screen.DrawText(
 			NewSmallFont,
 			OptionMenuSettings.mFontColorValue,
 			10, Screen.GetHeight() * 2 / 3,
 			"type: "..weaponstatus[0].." | timer: "..timer.." | progress: "..progress.." | timeout: "..timeout
 		);
+
 		Vector2 hudScale = (1.00, 1.00);
 		float textHeight = sb.pSmallFont.mFont.GetHeight() * hudscale.y;
 		float padding = 2 * hudScale.y;
-		float baseOffset = (-7 * textHeight) + (-3 * padding);
-		Super.DrawHUDStuff(sb, hdw, hpl);
+		float padStep = textHeight + padding;
+		float baseOffset = (-8 * textHeight) + (-3 * padding);
+
+		// Title
+		sb.DrawString(
+			sb.pSmallFont,
+			"--- Bandaging ---",
+			(0, baseOffset),
+			sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_CENTER,
+			Font.CR_GRAY,
+			scale: hudScale
+		);
+
+		// Wounds
+		let woundHandler = UaS_WoundHandler(hpl.FindInventory("UaS_WoundHandler"));
+		for (int i = 0; woundHandler && i < woundHandler.critWounds.Size(); i++)
+		{
+			UaS_Wound wound = woundHandler.critWounds[i];
+			if (!wound) { continue; }
+
+			// location.x is the angle that you got hit from
+			// location.y is the height that you got hit at
+			sb.DrawString(
+				sb.pSmallFont,
+				"X",
+				(50 * sin(wound.location.x), 50 * wound.location.y),
+				sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_CENTER,
+				Font.CR_RED,
+				scale: hudScale
+			);
+		}
 	}
 
 	action void A_BandageEffect(int min, int max) {
@@ -47,17 +82,6 @@ class UaS_SelfBandage : SelfBandage {
 		A_MuzzleClimb(FRandom(-1.5, 1.8), FRandom(-2.4, 2.4));
 		A_StartSound("bandage/rustle", CHAN_BODY, CHANF_OVERLAP);
 	}
-
-/*
-	action void A_TryBandage() {
-		if (A_JumpIf(IsMoving.Count(self) >= 4, "Abort"))
-		switch (invoker.weaponstatus[0]) {
-			case TYPE_BANDAGE:
-				HandleBandage();
-				break;
-		}
-	}
-*/
 
 	action void A_TryBandage() {
 		invoker.timeout = 5;

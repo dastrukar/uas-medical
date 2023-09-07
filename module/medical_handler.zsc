@@ -52,7 +52,11 @@ class UaS_WoundHandler : Inventory {
 
 	void AppendWound(HDBleedingWound hdbw) {
 		critwounds.Push(UaS_Wound.Create(hdbw));
-		if (UaS_Medical_Debug) { Console.PrintF("new wound "..critwounds.Size()..": "..hdbw.depth); }
+		if (UaS_Medical_Debug) {
+			Console.PrintF(
+				"new wound %d: %f (%f, %f)",
+				critwounds.Size(), hdbw.depth, hdbw.location.x, hdbw.location.y);
+		}
 		hdbw.Destroy();
 	}
 
