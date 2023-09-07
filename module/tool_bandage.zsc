@@ -1,5 +1,5 @@
 // AHHHHHHH, I NEED A MEDIC BAG
-class UaS_SelfBandage : SelfBandage {
+class UaS_SelfBandage : UaS_MedicalTool {
 	int progress;
 	int timer;
 	int timeout;
@@ -13,7 +13,7 @@ class UaS_SelfBandage : SelfBandage {
 
 	override void DoEffect() {
 		if (!(owner.player.ReadyWeapon is "UaS_SelfBandage")) { return; }
-		wepmsg = "";
+		Super.DoEffect();
 		if (timer >= 0) { --timer; }
 		if (timeout >= 0) { --timeout; }
 		if (timeout <= 0) {
@@ -27,6 +27,54 @@ class UaS_SelfBandage : SelfBandage {
 			&& !(owner.player.oldbuttons & BT_FIREMODE)
 		) { ++weaponstatus[0]; }
 		if (weaponstatus[0] > TYPE_BANDAGE) { weaponstatus[0] = TYPE_IMPROVISED; }
+	}
+
+	void BandageWound(int toPatch, int pressure) {
+		if (!currentWound) { return; }
+
+		currentWound.patched += min(toPatch, currentWound.depth);
+		currentWound.depth = min(currentWound.depth - toPatch, 0);
+		currentWound.pressure += pressure;
+	}
+
+	void BandageEffect(int min, int max) {
+		timer = Random(min, max);
+		A_MuzzleClimb(FRandom(-1.5, 1.8), FRandom(-2.4, 2.4));
+		A_StartSound("bandage/rustle", CHAN_BODY, CHANF_OVERLAP);
+	}
+
+	void TryBandage() {
+		timeout = 5;
+		if (timer <= 0 && timeout <= 0) {
+			timeout = 5;
+			progress = 0;
+			BandageEffect(5, 10);
+			A_StartSound("bandage/rip", CHAN_WEAPON, CHANF_OVERLAP, 0.4);
+			return;
+		}
+		else if (timer <= 0 && timeout > 0) { ++progress; }
+		else { return; }
+
+		switch (progress) {
+			case 1:
+				BandageEffect(30, 40);
+				break;
+
+			case 2:
+				BandageEffect(30, 35);
+				break;
+
+			case 3:
+				BandageEffect(15, 20);
+				break;
+
+			default:
+				BandageWound(FRandom(20, 30), FRandom(0.025, 0.1));
+				progress = 1;
+				A_StartSound("bandage/pocket", CHAN_BODY, CHANF_OVERLAP);
+				A_ChangeVelocity(FRandom(-0.3, 0.3), FRandom(-0.3, 0.3), FRandom(-1, 2));
+				break;
+		}
 	}
 
 	override void DrawHUDStuff(HDStatusBar sb, HDWeapon hdw, HDPlayerPawn hpl) {
@@ -75,59 +123,6 @@ class UaS_SelfBandage : SelfBandage {
 				scale: hudScale
 			);
 		}
-	}
-
-	action void A_BandageEffect(int min, int max) {
-		invoker.timer = Random(min, max);
-		A_MuzzleClimb(FRandom(-1.5, 1.8), FRandom(-2.4, 2.4));
-		A_StartSound("bandage/rustle", CHAN_BODY, CHANF_OVERLAP);
-	}
-
-	action void A_TryBandage() {
-		invoker.timeout = 5;
-		//if (invoker.progress == 0) {
-		if (invoker.timer <= 0 && invoker.timeout <= 0) {
-			invoker.timeout = 5;
-			invoker.progress = 0;
-			A_BandageEffect(5, 10);
-			A_StartSound("bandage/rip", CHAN_WEAPON, CHANF_OVERLAP, 0.4);
-			return;
-		}
-		else if (invoker.timer <= 0 && invoker.timeout > 0) { ++invoker.progress; }
-		else { return; }
-
-		switch (invoker.progress) {
-			case 1:
-				A_BandageEffect(30, 40);
-				break;
-
-			case 2:
-				A_BandageEffect(30, 35);
-				break;
-
-			case 3:
-				A_BandageEffect(15, 20);
-				break;
-
-			default:
-				invoker.BandageWound(FRandom(20, 30), self);
-				UaS_Wound(invoker.targetwound).pressure += frandom(0.025, 0.1);
-				invoker.progress = 1;
-				A_StartSound("bandage/pocket", CHAN_BODY, CHANF_OVERLAP);
-				A_ChangeVelocity(FRandom(-0.3, 0.3), FRandom(-0.3, 0.3), FRandom(-1, 2));
-				break;
-		}
-	}
-
-	States {
-		Try:
-			TNT1 A 0 A_JumpIf(invoker.weaponstatus[0] != TYPE_IMPROVISED, "OverrideTry");
-			goto Super::Try;
-
-		OverrideTry:
-			TNT1 A 0 A_JumpIf(IsMoving.Count(self) >= 4, "Abort");
-			TNT1 A 0 A_TryBandage();
-			goto Ready;
 	}
 
 	enum BandageTypes {
