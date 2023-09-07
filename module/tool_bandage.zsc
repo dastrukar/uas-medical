@@ -3,17 +3,21 @@ class UaS_SelfBandage : UaS_MedicalTool {
 	int progress;
 	int timer;
 	int timeout;
+	int woundIndex;
 
 	override void PostBeginPlay() {
 		Super.PostBeginPlay();
 		weaponstatus[0] = TYPE_BANDAGE;
 		timer = 0;
 		progress = 0;
+		woundIndex = 0;
 	}
 
 	override void DoEffect() {
 		if (!(owner.player.ReadyWeapon is "UaS_SelfBandage")) { return; }
+
 		Super.DoEffect();
+
 		if (timer >= 0) { --timer; }
 		if (timeout >= 0) { --timeout; }
 		if (timeout <= 0) {
@@ -21,19 +25,41 @@ class UaS_SelfBandage : UaS_MedicalTool {
 			progress = 0;
 		}
 
+		if (owner.player.cmd.buttons & BT_ATTACK) { TryBandage(); }
+		else { CycleWounds(); }
+		/*
 		if (
 			timer <= 0
 			&& owner.player.cmd.buttons & BT_FIREMODE
 			&& !(owner.player.oldbuttons & BT_FIREMODE)
 		) { ++weaponstatus[0]; }
 		if (weaponstatus[0] > TYPE_BANDAGE) { weaponstatus[0] = TYPE_IMPROVISED; }
+		*/
 	}
 
-	void BandageWound(int toPatch, int pressure) {
+	// also updates wounds
+	void CycleWounds() {
+		if (wh.critWounds.Size() == 0) { return; }
+
+		if (owner.player.cmd.buttons & BT_RELOAD && !(owner.player.oldbuttons & BT_RELOAD)) {
+			++woundIndex;
+		}
+		else if (owner.player.cmd.buttons & BT_ALTRELOAD && !(owner.player.oldbuttons & BT_ALTRELOAD)) {
+			--woundIndex;
+		}
+
+		if (woundIndex < 0 || (!currentWound && woundIndex >= wh.critWounds.Size())) {
+			woundIndex = wh.critWounds.Size() - 1;
+		}
+		else if (woundIndex >= wh.critWounds.Size()) { woundIndex = 0; }
+
+		currentWound = GetWound(woundIndex);
+	}
+
+	void BandageWound(float toPatch, float pressure) {
 		if (!currentWound) { return; }
 
-		currentWound.patched += min(toPatch, currentWound.depth);
-		currentWound.depth = min(currentWound.depth - toPatch, 0);
+		currentWound.Patch(toPatch);
 		currentWound.pressure += pressure;
 	}
 
@@ -44,6 +70,8 @@ class UaS_SelfBandage : UaS_MedicalTool {
 	}
 
 	void TryBandage() {
+		if (!currentWound) { return; }
+
 		timeout = 5;
 		if (timer <= 0 && timeout <= 0) {
 			timeout = 5;
@@ -105,12 +133,61 @@ class UaS_SelfBandage : UaS_MedicalTool {
 			scale: hudScale
 		);
 
-		// Wounds
-		let woundHandler = UaS_WoundHandler(hpl.FindInventory("UaS_WoundHandler"));
-		for (int i = 0; woundHandler && i < woundHandler.critWounds.Size(); i++)
+		// cool grid
+		int gridAlpha = 25;
+		sb.Fill(
+			Color(gridAlpha, sb.sbcolour.r, sb.sbcolour.g, sb.sbcolour.b),
+			-62 * hudScale.x, -60 * hudScale.y,
+			124 * hudScale.x, 120 * hudScale.y,
+			sb.DI_SCREEN_CENTER
+		);
+		for (int i = 0; i < 60; i++)
 		{
-			UaS_Wound wound = woundHandler.critWounds[i];
+			sb.Fill(
+				Color(gridAlpha, sb.sbcolour.r, sb.sbcolour.g, sb.sbcolour.b),
+				-60 * hudScale.x, (-60 + i * 2) * hudScale.y,
+				120 * hudScale.x, 1 * hudScale.y,
+				sb.DI_SCREEN_CENTER
+			);
+		}
+		for (int i = 0; i < 11; i++)
+		{
+			sb.Fill(
+				Color(gridAlpha, sb.sbcolour.r, sb.sbcolour.g, sb.sbcolour.b),
+				(-50 + 10 * i) * hudScale.x, -60 * hudScale.y,
+				1 * hudScale.x, 120 * hudScale.y,
+				sb.DI_SCREEN_CENTER
+			);
+			sb.Fill(
+				Color(gridAlpha, sb.sbcolour.r, sb.sbcolour.g, sb.sbcolour.b),
+				-60 * hudScale.x, (-50 + 10 * i) * hudScale.y,
+				120 * hudScale.x, 1 * hudScale.y,
+				sb.DI_SCREEN_CENTER
+			);
+		}
+
+		// Wounds
+		if (!wh) { return; }
+		if (wh.critWounds.Size() == 0) {
+			sb.DrawString(
+				sb.pSmallFont,
+				"You have no wounds.",
+				(0, 0),
+				sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_CENTER,
+				Font.CR_BLACK,
+				scale: hudScale
+			);
+			return;
+		}
+
+		for (int i = 0; i < wh.critWounds.Size(); i++)
+		{
+			UaS_Wound wound = wh.critWounds[i];
 			if (!wound) { continue; }
+
+			int col;
+			if (i == woundIndex) { col = (wound.depth <= 0.)? Font.CR_GOLD : Font.CR_RED; }
+			else { col = (wound.depth <= 0.)? Font.CR_YELLOW : Font.CR_DARKRED; }
 
 			// location.x is the angle that you got hit from
 			// location.y is the height that you got hit at
@@ -119,7 +196,7 @@ class UaS_SelfBandage : UaS_MedicalTool {
 				"X",
 				(50 * sin(wound.location.x), 50 * wound.location.y),
 				sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_CENTER,
-				Font.CR_RED,
+				col,
 				scale: hudScale
 			);
 		}

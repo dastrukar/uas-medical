@@ -38,7 +38,7 @@ class UaS_Wound : HDBleedingWound {
 
 		// Bandage gets more loose over time
 		if (random(0, 1)) {
-			pressure = max(pressure - frandom(0, 0.0005), 0);
+			pressure = max(pressure - frandom(0, 0.0001), 0);
 		}
 
 		// depth doesn't really equal to wound being open
@@ -137,6 +137,8 @@ extend class UaS_Wound {
 		nw.open = hdbw.depth;
 		nw.timer = (random[uas_wi](10, 30) * 35);
 		nw.description = WoundDescription(hdbw.depth);
+		nw.pressure = 0;
+		nw.stabilised = 0;
 
 		// Inherit
 		nw.bleeder = hdbw.bleeder;
