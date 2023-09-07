@@ -1,0 +1,67 @@
+// Any medical tool that requires a fancy interface for whatever reason
+class UaS_MedicalTool : HDWeapon {
+	StatusInfo currentMessage; // used for UI messages
+
+	UaS_Wound currentWound;
+	UaS_WoundHandler wh;
+	UaS_MedicalWheel wheel;
+	HDPlayerPawn patient, lastpatient;
+
+	Default {
+		Weapon.SlotNumber 9;
+	}
+
+	override void DoEffect() {
+		if (!wheel) { wheel = UaS_MedicalWheel(owner.FindInventory("UaS_MedicalWheel")); }
+		SetPatient();
+	}
+
+	// Somewhat copied from HD, largely rewritten
+	bool HandleStrip() {
+		string itemname, imperative;
+		// check for intervening items, otherwise exit early
+		bool intervening = !HDPlayerPawn.CheckStrip(patient, patient, false);
+		if(!intervening) return true;
+
+		if(patient.countinv("WornRadsuit")) { itemname = "environment suit "; }
+		else if(patient.countinv("HDArmourWorn")) { itemname = "armour "; }
+		else { itemname = "worn layers "; }
+
+		// check owner or other
+		if(patient == owner) {
+			imperative = "Take off your ";
+		}
+		else {
+			imperative = "Have them take off their ";
+		}
+		// display message
+		currentmessage.text = imperative..itemname.."first!\n";
+		currentmessage.timeout = 2*35;
+		return false;
+	}
+
+	void SetPatient() {
+		HDPlayerPawn other;
+		FLineTraceData tktrace;
+		owner.LineTrace(owner.angle, 42, owner.pitch, offsetz: owner.height-12, data: tktrace);
+		if (tktrace.hitactor && tktrace.hitactor is "HDPlayerPawn") { other = HDPlayerPawn(tktrace.hitactor); }
+
+		if (other && (owner.player.cmd.buttons & BT_ZOOM)) { patient = other; }
+		if (!patient || levellocals.Vec3Diff(owner.pos, patient.pos).length() > owner.radius * 4) { patient = HDPlayerPawn(owner); }
+
+		wh = UaS_WoundHandler(patient.FindInventory('UaS_WoundHandler'));
+		if (!wh) { console.printf("No wound handler!"); return; }
+		if (patient != lastpatient) { currentWound = null; }
+		lastpatient = patient;
+	}
+
+	UaS_Wound GetWound(int index) {
+		if (wh.critwounds.size() <= 0) { return null; }
+		return wh.critwounds[index];
+	}
+
+	struct StatusInfo {
+		string text;
+		int timeout;
+	}
+}

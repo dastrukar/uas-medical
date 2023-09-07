@@ -1,12 +1,7 @@
 const UAS_HDLD_TRAUMAKIT = "trk";
 
-class UaS_TraumaKit : HDWeapon {
+class UaS_TraumaKit : UaS_MedicalTool {
 	string statusMessage;
-	StatusInfo currentMessage;
-	UaS_Wound currentWound;
-	UaS_WoundHandler wh;
-	UaS_MedicalWheel wheel;
-	HDPlayerPawn patient, lastpatient;
 
 	transient CVar UaS_TraumaKit_AltControls;
 	transient CVar UaS_TraumaKit_InvertCycle;
@@ -26,7 +21,6 @@ class UaS_TraumaKit : HDWeapon {
 		+hdweapon.fitsinbackpack;
 		//+WEAPON.NOAUTOFIRE;
 		weapon.slotpriority 0.5;
-		weapon.slotnumber 9;
 		hdweapon.refid UAS_HDLD_TRAUMAKIT;
 		scale 0.5;
 		tag "Trauma Kit";
@@ -95,45 +89,6 @@ class UaS_TraumaKit : HDWeapon {
 		TickMessages();
 	}
 
-	// Somewhat copied from HD, largely rewritten
-	bool HandleStrip() {
-		string itemname, imperative;
-		// check for intervening items, otherwise exit early
-		bool intervening = !HDPlayerPawn.CheckStrip(patient, patient, false);
-		if(!intervening) return true;
-
-		if(patient.countinv("WornRadsuit")) { itemname = "environment suit "; }
-		else if(patient.countinv("HDArmourWorn")) { itemname = "armour "; }
-		else { itemname = "worn layers "; }
-
-		// check owner or other
-		if(patient == owner) {
-			imperative = "Take off your ";
-		}
-		else {
-			imperative = "Have them take off their ";
-		}
-		// display message
-		currentmessage.text = imperative..itemname.."first!\n";
-		currentmessage.timeout = 2*35;
-		return false;
-	}
-
-	void SetPatient() {
-		HDPlayerPawn other;
-		FLineTraceData tktrace;
-		owner.LineTrace(owner.angle, 42, owner.pitch, offsetz: owner.height-12, data: tktrace);
-		if (tktrace.hitactor && tktrace.hitactor is "HDPlayerPawn") { other = HDPlayerPawn(tktrace.hitactor); }
-
-		if (other && (owner.player.cmd.buttons & BT_ZOOM)) { patient = other; }
-		if (!patient || levellocals.Vec3Diff(owner.pos, patient.pos).length() > owner.radius * 4) { patient = HDPlayerPawn(owner); }
-
-		wh = UaS_WoundHandler(patient.FindInventory('UaS_WoundHandler'));
-		if (!wh) { console.printf("No wound handler!"); return; }
-		if (patient != lastpatient) { currentWound = null; }
-		lastpatient = patient;
-	}
-
 	void TickMessages() {
 		// Tick down transient messages
 		if (currentmessage.timeout > 0) {
@@ -200,11 +155,6 @@ class UaS_TraumaKit : HDWeapon {
 		}
 	}
 
-	UaS_Wound GetWound(int index) {
-		if (wh.critwounds.size() <= 0) { return null; }
-		return wh.critwounds[index];
-	}
-
 	void DebugStatus() {
 		if (currentWound) {
 			statusmessage = statusmessage.."dirty "..currentWound.dirty.."\n";
@@ -220,11 +170,6 @@ class UaS_TraumaKit : HDWeapon {
 		statusMessage = statusMessage.."Unstable Wounds "..patient.unstablewoundcount.."\n";
 		*/
 		statusMessage = statusMessage.."Old Wounds "..patient.oldwoundcount.."\n";
-	}
-
-	struct StatusInfo {
-		string text;
-		int timeout;
 	}
 
 	enum ToolModes {

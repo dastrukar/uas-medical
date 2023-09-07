@@ -2,11 +2,12 @@ version "4.9"
 
 #include "module/medical_handler.zsc"
 #include "module/medical_spawner.zsc"
-#include "module/medical_bandage.zsc"
 #include "module/medical_stabilize.zsc"
 #include "module/medical_wound.zsc"
 #include "module/medical_debug.zsc"
 #include "module/medical_wheel.zsc"
+#include "module/medical_tool.zsc"
+#include "module/medical_bandage.zsc"
 
 #include "module/traumakit/traumakit.zsc"
 #include "module/traumakit/traumakit_handler.zsc"
