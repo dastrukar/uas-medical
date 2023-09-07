@@ -14,7 +14,8 @@ class UaS_Wound : HDBleedingWound {
 
 	double open;
 	double cavity; // cavity and width can't be the same, as width determines bleedrate
-	bool stabilised;
+	//bool stabilised;
+	double stabilised;
 
 	// Bandage related values
 	double pressure;
@@ -34,6 +35,10 @@ class UaS_Wound : HDBleedingWound {
 		}
 
 		Super.Tick();
+		TryStabilise();
+
+		if (random(0, 1))
+			pressure = max(pressure - frandom(0, 0.0005), 0);
 
 		// depth doesn't really equal to wound being open
 		open = depth + patched;
@@ -62,8 +67,11 @@ class UaS_Wound : HDBleedingWound {
 	}
 
 	override void ComeUndone() {
-		if (stabilised) { return; }
-		Super.ComeUndone();
+		if (pressure <= 0.) {
+			return;
+		}
+		//if (stabilised) { return; }
+		//Super.ComeUndone();
 	}
 
 	override void Regenerate() {
@@ -85,6 +93,12 @@ class UaS_Wound : HDBleedingWound {
 
 		// regenrate works really damn weirdly, which makes sense since wounds normally depend on 2f to heal
 		//Super.Regenerate();
+	}
+
+	void TryStabilise() {
+		if (pressure <= 0.) { return; }
+
+		stabilised = max(stabilised + frandom(0, 0.00001 + (pressure / 2)), 0);
 	}
 
 	bool inpain(int inflict = 0) {

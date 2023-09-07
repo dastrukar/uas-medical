@@ -28,8 +28,8 @@ class UaS_MedicalDebug : EventHandler {
 			if (!wh.critwounds[i]) { continue; }
 			let wi = UaS_Wound(wh.critwounds[i]);
 			whInfo = String.Format(
-				"%s%i: open %f | cavity %f | stable? %i",
-				whInfo, i, wi.open, wi.cavity, wi.stabilised
+				"%s%i: open %f | cavity %f | pressure %f | stable? %f",
+				whInfo, i, wi.open, wi.cavity, wi.pressure, wi.stabilised
 			);
 			whInfo = String.Format(
 				"%s | \c[red]%f\c-/\c[gold]%f\c-/\c[darkgray]%f\c- | width %f | regenrate %f",
