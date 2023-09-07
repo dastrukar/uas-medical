@@ -51,9 +51,8 @@ class UaS_TraumaKit : UaS_MedicalTool {
 			UaS_TraumaKit_InvertCycle = CVar.GetCVar("UaS_TraumaKit_InvertCycle", owner.player);
 		}
 
-		if (!wheel) { wheel = UaS_MedicalWheel(owner.FindInventory("UaS_MedicalWheel")); }
+		Super.DoEffect();
 		SetHelpText();
-		SetPatient();
 		CycleWounds();
 		CycleTools();
 		HandleSupplies();
