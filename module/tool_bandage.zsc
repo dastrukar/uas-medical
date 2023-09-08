@@ -121,7 +121,7 @@ class UaS_SelfBandage : UaS_MedicalTool {
 		float textHeight = sb.pSmallFont.mFont.GetHeight() * hudscale.y;
 		float padding = 2 * hudScale.y;
 		float padStep = textHeight + padding;
-		float baseOffset = (-8 * textHeight) + (-3 * padding);
+		float baseOffset = padStep * -8;
 
 		// Title
 		sb.DrawString(
@@ -133,25 +133,29 @@ class UaS_SelfBandage : UaS_MedicalTool {
 			scale: hudScale
 		);
 
+		// Show wounds
+		Vector2 woundsLocation = (-60 * hudScale.x, 0);
+
 		// cool grid
 		int gridAlpha = 25;
 		int gridWidth = 120 * hudScale.x;
 		int gridHeight = 120 * hudScale.y;
+		Color gridColour = Color(gridAlpha, sb.sbcolour.r, sb.sbcolour.g, sb.sbcolour.b);
 		Vector2 gridPos = (
-			gridWidth / -2 * hudScale.x,
-			gridHeight / -2 * hudScale.y
+			woundsLocation.x - (gridWidth / 2),
+			woundsLocation.y - (gridHeight / 2)
 		);
 		sb.Fill(
-			Color(gridAlpha, sb.sbcolour.r, sb.sbcolour.g, sb.sbcolour.b),
-			gridPos.x - 2, gridPos.y,
-			gridWidth + 4, gridHeight,
+			gridColour,
+			gridPos.x - (2 * hudScale.x), gridPos.y,
+			gridWidth + (4 * hudScale.x), gridHeight,
 			sb.DI_SCREEN_CENTER
 		);
-		for (int i = 0; i < 60; i++)
+		for (int i = 0; i < gridHeight / 2; i++)
 		{
 			sb.Fill(
-				Color(gridAlpha, sb.sbcolour.r, sb.sbcolour.g, sb.sbcolour.b),
-				gridPos.x, (gridPos.y + i * 2),
+				gridColour,
+				gridPos.x, gridPos.y + (i * 2),
 				gridWidth, hudScale.y,
 				sb.DI_SCREEN_CENTER
 			);
@@ -160,51 +164,62 @@ class UaS_SelfBandage : UaS_MedicalTool {
 		for (int i = 1; i < 12; i++)
 		{
 			sb.Fill(
-				Color(gridAlpha, sb.sbcolour.r, sb.sbcolour.g, sb.sbcolour.b),
+				gridColour,
 				gridPos.x + (gridStep.x * i), gridPos.y,
 				hudScale.x, gridHeight,
 				sb.DI_SCREEN_CENTER
 			);
 			sb.Fill(
-				Color(gridAlpha, sb.sbcolour.r, sb.sbcolour.g, sb.sbcolour.b),
+				gridColour,
 				gridPos.x, gridPos.y + (gridStep.y * i),
 				gridWidth, hudScale.y,
 				sb.DI_SCREEN_CENTER
 			);
 		}
 
-		// Wounds
+		// Wound icons
 		if (!wh) { return; }
 		if (wh.critWounds.Size() == 0) {
 			sb.DrawString(
 				sb.pSmallFont,
 				"You have no wounds.",
-				(0, 0),
+				woundsLocation,
 				sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_CENTER,
-				Font.CR_BLACK,
+				Font.CR_DARKGRAY,
 				scale: hudScale
 			);
 			return;
 		}
 
+		UaS_Wound selectedWound;
 		for (int i = 0; i < wh.critWounds.Size(); i++)
 		{
 			UaS_Wound wound = wh.critWounds[i];
 			if (!wound) { continue; }
-
-			int col;
-			if (i == woundIndex) { col = (wound.depth <= 0.)? Font.CR_GOLD : Font.CR_RED; }
-			else { col = (wound.depth <= 0.)? Font.CR_YELLOW : Font.CR_DARKRED; }
+			if (i == woundIndex) { selectedWound = wound; }
 
 			// location.x is the angle that you got hit from
 			// location.y is the height that you got hit at
 			sb.DrawString(
 				sb.pSmallFont,
 				"X",
-				(50 * sin(wound.location.x), 50 * wound.location.y),
+				woundsLocation + (50 * sin(wound.location.x), 25 - (50 * wound.location.y)),
 				sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_CENTER,
-				col,
-				scale: hudScale
+				(wound.depth <= 0.)? Font.CR_YELLOW : Font.CR_DARKRED,
+				alpha: 0.75,
+				scale: hudScale * 0.5
+			);
+		}
+
+		// Always display selected wound on top
+		if (selectedWound) {
+			sb.DrawString(
+				sb.pSmallFont,
+				"X",
+				woundsLocation + (50 * sin(selectedWound.location.x), 25 - (50 * selectedWound.location.y)),
+				sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_CENTER,
+				(selectedWound.depth <= 0.)? Font.CR_GOLD : Font.CR_RED,
+				scale: hudScale * 0.5
 			);
 		}
 	}
