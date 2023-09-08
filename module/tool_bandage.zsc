@@ -135,33 +135,40 @@ class UaS_SelfBandage : UaS_MedicalTool {
 
 		// cool grid
 		int gridAlpha = 25;
+		int gridWidth = 120 * hudScale.x;
+		int gridHeight = 120 * hudScale.y;
+		Vector2 gridPos = (
+			gridWidth / -2 * hudScale.x,
+			gridHeight / -2 * hudScale.y
+		);
 		sb.Fill(
 			Color(gridAlpha, sb.sbcolour.r, sb.sbcolour.g, sb.sbcolour.b),
-			-62 * hudScale.x, -60 * hudScale.y,
-			124 * hudScale.x, 120 * hudScale.y,
+			gridPos.x - 2, gridPos.y,
+			gridWidth + 4, gridHeight,
 			sb.DI_SCREEN_CENTER
 		);
 		for (int i = 0; i < 60; i++)
 		{
 			sb.Fill(
 				Color(gridAlpha, sb.sbcolour.r, sb.sbcolour.g, sb.sbcolour.b),
-				-60 * hudScale.x, (-60 + i * 2) * hudScale.y,
-				120 * hudScale.x, 1 * hudScale.y,
+				gridPos.x, (gridPos.y + i * 2),
+				gridWidth, hudScale.y,
 				sb.DI_SCREEN_CENTER
 			);
 		}
-		for (int i = 0; i < 11; i++)
+		Vector2 gridStep = (10 * hudScale.x, 10 * hudScale.y);
+		for (int i = 1; i < 12; i++)
 		{
 			sb.Fill(
 				Color(gridAlpha, sb.sbcolour.r, sb.sbcolour.g, sb.sbcolour.b),
-				(-50 + 10 * i) * hudScale.x, -60 * hudScale.y,
-				1 * hudScale.x, 120 * hudScale.y,
+				gridPos.x + (gridStep.x * i), gridPos.y,
+				hudScale.x, gridHeight,
 				sb.DI_SCREEN_CENTER
 			);
 			sb.Fill(
 				Color(gridAlpha, sb.sbcolour.r, sb.sbcolour.g, sb.sbcolour.b),
-				-60 * hudScale.x, (-50 + 10 * i) * hudScale.y,
-				120 * hudScale.x, 1 * hudScale.y,
+				gridPos.x, gridPos.y + (gridStep.y * i),
+				gridWidth, hudScale.y,
 				sb.DI_SCREEN_CENTER
 			);
 		}
