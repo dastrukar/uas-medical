@@ -65,12 +65,13 @@ class UaS_SelfBandage : UaS_MedicalTool {
 
 	void BandageEffect(int min, int max) {
 		timer = Random(min, max);
-		A_MuzzleClimb(FRandom(-1.5, 1.8), FRandom(-2.4, 2.4));
+		HDPlayerPawn(owner).A_MuzzleClimb((FRandom(-1.5, 1.8), FRandom(-2.4, 2.4)), (0, 0), (0, 0), (0, 0));
 		A_StartSound("bandage/rustle", CHAN_BODY, CHANF_OVERLAP);
 	}
 
 	void TryBandage() {
 		if (!currentWound) { return; }
+		if (patient == owner && owner.pitch < 45) { owner.pitch += 6; return; }
 
 		timeout = 5;
 		if (timer <= 0 && timeout <= 0) {
@@ -100,7 +101,7 @@ class UaS_SelfBandage : UaS_MedicalTool {
 				BandageWound(FRandom(20, 30), FRandom(0.025, 0.1));
 				progress = 1;
 				A_StartSound("bandage/pocket", CHAN_BODY, CHANF_OVERLAP);
-				A_ChangeVelocity(FRandom(-0.3, 0.3), FRandom(-0.3, 0.3), FRandom(-1, 2));
+				owner.A_ChangeVelocity(FRandom(-0.3, 0.3), FRandom(-0.3, 0.3), FRandom(-1, 2));
 				break;
 		}
 	}
