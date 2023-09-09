@@ -98,10 +98,12 @@ class UaS_SelfBandage : UaS_MedicalTool {
 				break;
 
 			default:
-				BandageWound(FRandom(20, 30), FRandom(0.025, 0.1));
-				progress = 1;
+				BandageEffect(4, 8);
 				A_StartSound("bandage/pocket", CHAN_BODY, CHANF_OVERLAP);
 				owner.A_ChangeVelocity(FRandom(-0.3, 0.3), FRandom(-0.3, 0.3), FRandom(-1, 2));
+
+				progress = 0;
+				BandageWound(FRandom(20, 30), FRandom(0.025, 0.1));
 				break;
 		}
 	}
