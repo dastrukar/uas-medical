@@ -191,7 +191,6 @@ class UaS_SelfBandage : UaS_MedicalTool {
 				Font.CR_DARKGRAY,
 				scale: hudScale
 			);
-			return;
 		}
 
 		UaS_Wound selectedWound;
@@ -223,6 +222,33 @@ class UaS_SelfBandage : UaS_MedicalTool {
 				sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_CENTER,
 				(selectedWound.depth <= 0.)? Font.CR_GOLD : Font.CR_RED,
 				scale: hudScale * 0.5
+			);
+		}
+
+		// Wound info
+		Vector2 woundInfoPos = (60 * hudScale.x, baseOffset / 2);
+		if (!selectedWound) {
+			sb.DrawString(
+				sb.pSmallFont,
+				"No wound selected.",
+				woundInfoPos,
+				sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_CENTER,
+				Font.CR_DARKGRAY
+			);
+		} else {
+			sb.DrawString(
+				sb.pSmallFont,
+				"- The wound is "..((selectedWound.depth <= 0.)? "patched" : "open"),
+				woundInfoPos,
+				sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_LEFT,
+				Font.CR_GRAY
+			);
+			sb.DrawString(
+				sb.pSmallFont,
+				"- pressure is "..selectedWound.pressure,
+				woundInfoPos + (0, padStep),
+				sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_LEFT,
+				Font.CR_GRAY
 			);
 		}
 	}
