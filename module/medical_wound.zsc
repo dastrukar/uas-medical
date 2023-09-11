@@ -93,9 +93,11 @@ class UaS_Wound : HDBleedingWound {
 	}
 
 	void TryStabilise() {
-		if (pressure <= 0.) { return; }
+		if (random(0, 10) != 0) { return; }
 
-		stabilised = max(stabilised + frandom(0, 0.00001 + (pressure / 2)), 0);
+		float minStable = 0;
+		float maxStable = log(pressure + 1.0001) / max(0.1, depth + patched);
+		stabilised = min(stabilised + frandom(minStable, maxStable), 100);
 	}
 
 	bool inpain(int inflict = 0) {

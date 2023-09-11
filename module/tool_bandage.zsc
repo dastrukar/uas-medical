@@ -103,7 +103,7 @@ class UaS_SelfBandage : UaS_MedicalTool {
 				owner.A_ChangeVelocity(FRandom(-0.3, 0.3), FRandom(-0.3, 0.3), FRandom(-1, 2));
 
 				progress = 0;
-				BandageWound(FRandom(20, 30), FRandom(0.025, 0.1));
+				BandageWound(FRandom(20, 30), FRandom(0.25, 1.));
 				break;
 		}
 	}
