@@ -201,10 +201,14 @@ class UaS_SelfBandage : UaS_MedicalTool {
 
 			// location.x is the angle that you got hit from
 			// location.y is the height that you got hit at
+			Vector2 woundPosition = (
+				woundsLocation.x + (50 * sin(selectedWound.location.x)) * hudScale.x,
+				woundsLocation.y + (25 - (50 * selectedWound.location.y)) * hudScale.y
+			);
 			sb.DrawString(
 				sb.pSmallFont,
 				"X",
-				woundsLocation + (50 * sin(wound.location.x), 25 - (50 * wound.location.y)),
+				woundPosition,
 				sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_CENTER,
 				(wound.depth <= 0.)? Font.CR_YELLOW : Font.CR_DARKRED,
 				alpha: 0.75,
@@ -214,13 +218,18 @@ class UaS_SelfBandage : UaS_MedicalTool {
 
 		// Always display selected wound on top
 		if (selectedWound) {
+			Color selectedColour = Color(128, sb.sbcolour.r, sb.sbcolour.g, sb.sbcolour.b);
+			Vector2 selectedPosition = (
+				woundsLocation.x + (50 * sin(selectedWound.location.x)) * hudScale.x,
+				woundsLocation.y + (25 - (50 * selectedWound.location.y)) * hudScale.y
+			);
 			sb.DrawString(
 				sb.pSmallFont,
 				"X",
-				woundsLocation + (50 * sin(selectedWound.location.x), 25 - (50 * selectedWound.location.y)),
+				selectedPosition,
 				sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_CENTER,
 				(selectedWound.depth <= 0.)? Font.CR_GOLD : Font.CR_RED,
-				scale: hudScale * 0.5
+				scale: hudScale * 0.75
 			);
 		}
 
