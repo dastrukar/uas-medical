@@ -105,6 +105,16 @@ class UaS_Wound : HDBleedingWound {
 		pain += inflict;
 		return (pain > (painkiller + 25) * 2);
 	}
+
+	// TODO: don't rely on Super.Bleedout();
+	override void Bleedout() {
+		if (frandom(1, 100) <= stabilised) { return; }
+
+		float actualWidth = width;
+		if (stabilised > 0.) { width -= width * stabilised / 100; }
+		Super.Bleedout();
+		width = actualWidth;
+	}
 }
 
 // Status methods
