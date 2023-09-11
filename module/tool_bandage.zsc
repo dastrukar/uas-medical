@@ -202,8 +202,8 @@ class UaS_SelfBandage : UaS_MedicalTool {
 			// location.x is the angle that you got hit from
 			// location.y is the height that you got hit at
 			Vector2 woundPosition = (
-				woundsLocation.x + (50 * sin(selectedWound.location.x)) * hudScale.x,
-				woundsLocation.y + (25 - (50 * selectedWound.location.y)) * hudScale.y
+				woundsLocation.x + (50 * sin(wound.location.x)) * hudScale.x,
+				woundsLocation.y + (25 - (50 * wound.location.y)) * hudScale.y
 			);
 			sb.DrawString(
 				sb.pSmallFont,
