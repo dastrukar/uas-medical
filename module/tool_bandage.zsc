@@ -73,16 +73,15 @@ class UaS_SelfBandage : UaS_MedicalTool {
 		if (!currentWound) { return; }
 		if (patient == owner && owner.pitch < 45) { owner.pitch += 6; return; }
 
-		timeout = 5;
 		if (timer <= 0 && timeout <= 0) {
 			timeout = 5;
 			progress = 0;
-			BandageEffect(5, 10);
 			owner.A_StartSound("bandage/rip", CHAN_WEAPON, CHANF_OVERLAP, 0.4);
+			BandageEffect(5, 10);
 			return;
 		}
 		else if (timer <= 0 && timeout > 0) { ++progress; }
-		else { return; }
+		else { timeout = 5; return; }
 
 		switch (progress) {
 			case 1:
@@ -99,7 +98,7 @@ class UaS_SelfBandage : UaS_MedicalTool {
 
 			default:
 				BandageEffect(4, 8);
-				owner.A_StartSound("bandage/pocket", CHAN_BODY, CHANF_OVERLAP);
+				owner.A_StartSound("weapons/pocket", CHAN_BODY, CHANF_OVERLAP);
 				owner.A_ChangeVelocity(FRandom(-0.3, 0.3), FRandom(-0.3, 0.3), FRandom(-1, 2));
 
 				progress = 0;
