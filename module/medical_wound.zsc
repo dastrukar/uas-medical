@@ -38,7 +38,8 @@ class UaS_Wound : HDBleedingWound {
 
 		// Bandage gets more loose over time
 		if (random(0, 1)) {
-			float maxPressureLoss = (hdp.CountInv("IsMoving"))? 0.0005 : 0.0001;
+			int maxIsMoving = 20;
+			float maxPressureLoss = 0.0001 + 0.0005 * (bleeder.CountInv("IsMoving") / maxIsMoving);
 			pressure = max(pressure - frandom(0, maxPressureLoss), 0);
 		}
 
