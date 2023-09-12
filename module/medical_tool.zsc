@@ -16,30 +16,6 @@ class UaS_MedicalTool : HDWeapon {
 		SetPatient();
 	}
 
-	// Somewhat copied from HD, largely rewritten
-	bool HandleStrip() {
-		string itemname, imperative;
-		// check for intervening items, otherwise exit early
-		bool intervening = !HDPlayerPawn.CheckStrip(patient, patient, false);
-		if(!intervening) return true;
-
-		if(patient.countinv("WornRadsuit")) { itemname = "environment suit "; }
-		else if(patient.countinv("HDArmourWorn")) { itemname = "armour "; }
-		else { itemname = "worn layers "; }
-
-		// check owner or other
-		if(patient == owner) {
-			imperative = "Take off your ";
-		}
-		else {
-			imperative = "Have them take off their ";
-		}
-		// display message
-		currentmessage.text = imperative..itemname.."first!\n";
-		currentmessage.timeout = 2*35;
-		return false;
-	}
-
 	void SetPatient() {
 		HDPlayerPawn other;
 		FLineTraceData tktrace;
