@@ -7,7 +7,8 @@ version "4.9"
 #include "module/medical_wheel.zsc"
 #include "module/medical_tool.zsc"
 
-#include "module/tool_bandage.zsc"
+#include "module/bandage/bandage.zsc"
+#include "module/bandage/bandage_hud.zsc"
 
 #include "module/traumakit/traumakit.zsc"
 #include "module/traumakit/traumakit_handler.zsc"
