@@ -158,11 +158,15 @@ class UaS_TraumaKit : UaS_MedicalTool {
 	bool HandleStrip() {
 		string itemname, imperative;
 		// check for intervening items, otherwise exit early
-		bool intervening = !HDPlayerPawn.CheckStrip(patient, patient, false);
-		if (!intervening) return true;
+		bool intervening = (
+			!HDPlayerPawn.CheckStrip(patient, patient, false)
+			|| (currentWound && currentWound.patched > 0.)
+		);
+		if (!intervening) { return true; }
 
 		if (patient.countinv("WornRadsuit")) { itemname = "environment suit "; }
 		else if (patient.countinv("HDArmourWorn")) { itemname = "armour "; }
+		else if (currentWound && currentWound.patched > 0.) { itemname = "bandage "; }
 		else { itemname = "worn layers "; }
 
 		// check owner or other
