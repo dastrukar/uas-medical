@@ -15,6 +15,12 @@ class UaS_SelfBandage : UaS_MedicalTool {
 		actionType = ACTION_NONE;
 	}
 
+	void ResetAction() {
+		timer = 0;
+		progress = 0;
+		actionType = ACTION_NONE;
+	}
+
 	override void DoEffect() {
 		if (!(owner.player.ReadyWeapon is "UaS_SelfBandage")) { return; }
 
@@ -22,11 +28,7 @@ class UaS_SelfBandage : UaS_MedicalTool {
 
 		if (timer >= 0) { --timer; }
 		if (timeout >= 0) { --timeout; }
-		if (timeout <= 0) {
-			timer = 0;
-			progress = 0;
-			actionType = ACTION_NONE;
-		}
+		if (timeout <= 0) { ResetAction(); }
 
 		if (owner.player.cmd.buttons & BT_ATTACK) { TryBandage(); }
 		else if (owner.player.cmd.buttons & BT_ALTATTACK) { TryRipBandage(); }
@@ -47,9 +49,11 @@ class UaS_SelfBandage : UaS_MedicalTool {
 
 		if (owner.player.cmd.buttons & BT_RELOAD && !(owner.player.oldbuttons & BT_RELOAD)) {
 			++woundIndex;
+			ResetAction();
 		}
 		else if (owner.player.cmd.buttons & BT_ALTRELOAD && !(owner.player.oldbuttons & BT_ALTRELOAD)) {
 			--woundIndex;
+			ResetAction();
 		}
 
 		if (woundIndex < 0 || (!currentWound && woundIndex >= wh.critWounds.Size())) {
