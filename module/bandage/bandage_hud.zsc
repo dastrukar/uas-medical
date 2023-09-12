@@ -1,4 +1,38 @@
-extend UaS_SelfBandage {
+extend class UaS_SelfBandage {
+	ui void DrawWound(HDStatusbar sb, UaS_Wound wound, Vector2 woundsLocation, Vector2 hudScale) {
+		// location.x is the angle that you got hit from
+		// location.y is the height that you got hit at
+		Vector2 woundPosition = (
+			woundsLocation.x + (50 * sin(wound.location.x)) * hudScale.x,
+			woundsLocation.y + (25 - (50 * wound.location.y)) * hudScale.y
+		);
+		bool selected = (wound == currentWound);
+		float woundAlpha = (selected)? 1.00 : 0.75;
+		Vector2 woundScale = ((selected)? 1.00 : 0.75) * hudScale;
+		int woundColour;
+		if (wound.depth <= 0.) { woundColour = (wound == currentWound)? Font.CR_GOLD : Font.CR_YELLOW; }
+		else { woundColour = (wound == currentWound)? Font.CR_RED : Font.CR_DARKRED; }
+
+		sb.DrawString(
+			sb.pSmallFont,
+			"X",
+			woundPosition,
+			sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_CENTER,
+			(selected)? Font.CR_RED : Font.CR_DARKRED,
+			alpha: woundAlpha,
+			scale: woundScale
+		);
+		sb.DrawString(
+			sb.pSmallFont,
+			"X",
+			woundPosition,
+			sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_CENTER,
+			(selected)? Font.CR_GOLD : Font.CR_YELLOW,
+			alpha: woundAlpha * wound.pressure / 5,
+			scale: woundScale
+		);
+	}
+
 	override void DrawHUDStuff(HDStatusBar sb, HDWeapon hdw, HDPlayerPawn hpl) {
 		// Draw Weapon Status
 		Super.DrawHUDStuff(sb, hdw, hpl);
@@ -91,39 +125,11 @@ extend UaS_SelfBandage {
 			if (!wound) { continue; }
 			if (i == woundIndex) { selectedWound = wound; }
 
-			// location.x is the angle that you got hit from
-			// location.y is the height that you got hit at
-			Vector2 woundPosition = (
-				woundsLocation.x + (50 * sin(wound.location.x)) * hudScale.x,
-				woundsLocation.y + (25 - (50 * wound.location.y)) * hudScale.y
-			);
-			sb.DrawString(
-				sb.pSmallFont,
-				"X",
-				woundPosition,
-				sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_CENTER,
-				(wound.depth <= 0.)? Font.CR_YELLOW : Font.CR_DARKRED,
-				alpha: 0.75,
-				scale: hudScale * 0.5
-			);
+			DrawWound(sb, wound, woundsLocation, hudScale);
 		}
 
 		// Always display selected wound on top
-		if (selectedWound) {
-			Color selectedColour = Color(128, sb.sbcolour.r, sb.sbcolour.g, sb.sbcolour.b);
-			Vector2 selectedPosition = (
-				woundsLocation.x + (50 * sin(selectedWound.location.x)) * hudScale.x,
-				woundsLocation.y + (25 - (50 * selectedWound.location.y)) * hudScale.y
-			);
-			sb.DrawString(
-				sb.pSmallFont,
-				"X",
-				selectedPosition,
-				sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_CENTER,
-				(selectedWound.depth <= 0.)? Font.CR_GOLD : Font.CR_RED,
-				scale: hudScale * 0.75
-			);
-		}
+		if (selectedWound) { DrawWound(sb, selectedWound, woundsLocation, hudScale); }
 
 		// Wound info
 		Vector2 woundInfoPos = (60 * hudScale.x, baseOffset / 2);
