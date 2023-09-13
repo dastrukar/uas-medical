@@ -62,7 +62,7 @@ extend class UaS_SelfBandage {
 		);
 
 		// Show wounds
-		Vector2 woundsLocation = (-60 * hudScale.x, 0);
+		Vector2 woundsLocation = (-70 * hudScale.x, 0);
 
 		// cool grid
 		int gridAlpha = 25;
@@ -132,13 +132,13 @@ extend class UaS_SelfBandage {
 		if (selectedWound) { DrawWound(sb, selectedWound, woundsLocation, hudScale); }
 
 		// Wound info
-		Vector2 woundInfoPos = (60 * hudScale.x, baseOffset / 2);
+		Vector2 woundInfoPos = (10 * hudScale.x, baseOffset / 2);
 		if (!selectedWound) {
 			sb.DrawString(
 				sb.pSmallFont,
 				"No wound selected.",
 				woundInfoPos,
-				sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_CENTER,
+				sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_LEFT,
 				Font.CR_DARKGRAY
 			);
 		} else {
