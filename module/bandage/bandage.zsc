@@ -151,6 +151,9 @@ class UaS_SelfBandage : UaS_MedicalTool {
 		}
 	}
 
+	void TryRipBloodbag() {
+	}
+
 	enum BandageTypes {
 		TYPE_IMPROVISED,
 		TYPE_BANDAGE,

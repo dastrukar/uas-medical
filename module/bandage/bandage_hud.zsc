@@ -152,13 +152,15 @@ extend class UaS_SelfBandage {
 				sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_LEFT,
 				Font.CR_GRAY
 			);
+
 			if (selectedWound.depth <= 0. && selectedWound.patched > 0) {
 				if (selectedWound.pressure > 5.0) { statusText = "\c[Green]very tight"; }
 				else if (selectedWound.pressure > 3.5) { statusText = "\c[DarkGreen]tight"; }
 				else if (selectedWound.pressure > 2.0) { statusText = "\c[Gold]a bit tight"; }
 				else if (selectedWound.pressure > 1.0) { statusText = "\c[Yellow]somewhat tight"; }
 				else if (selectedWound.pressure > 0.5) { statusText = "\c[Red]somewhat loose"; }
-				else { statusText = "\c[DarkRed]very loose"; }
+				else if (selectedWound.pressure > 0.2) { statusText = "\c[DarkRed]loose"; }
+				else { statusText = "\c[Black]very loose"; }
 
 				sb.DrawString(
 					sb.pSmallFont,
