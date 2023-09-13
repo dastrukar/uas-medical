@@ -71,7 +71,11 @@ class UaS_Wound : HDBleedingWound {
 
 	// If no pressure is being applied, the bandage is too loose and begins to fall off over time.
 	override void ComeUndone() {
-		if (pressure <= 0.) { Super.ComeUndone(); }
+		if (frandom(0.0, 0.2) <= pressure) { return; }
+
+		pressure = 0;
+		depth += patched;
+		patched = 0;
 	}
 
 	// Natural regeneration :]
