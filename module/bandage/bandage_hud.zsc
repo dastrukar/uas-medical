@@ -1,10 +1,17 @@
 extend class UaS_SelfBandage {
-	ui void DrawWound(HDStatusbar sb, UaS_Wound wound, Vector2 woundsLocation, Vector2 hudScale) {
+	ui void DrawWound(
+	        HDStatusbar sb,
+	        UaS_Wound wound,
+	        Vector2 woundsLocation,
+	        Vector2 gridSize,
+	        Vector2 hudScale
+	    ) {
 		// location.x is the angle that you got hit from
 		// location.y is the height that you got hit at
+		Vector2 offset = (gridSize.x / 2.5, gridSize.y / 2.5);
 		Vector2 woundPosition = (
-			woundsLocation.x + (50 * sin(wound.location.x)) * hudScale.x,
-			woundsLocation.y + (25 - (50 * wound.location.y)) * hudScale.y
+			woundsLocation.x + (offset.x * sin(wound.location.x)) * hudScale.x,
+			woundsLocation.y + (offset.y - (offset.y + offset.y) * wound.location.y) * hudScale.y
 		);
 		bool selected = (wound == currentWound);
 		float woundAlpha = (selected)? 1.00 : 0.75;
@@ -66,25 +73,24 @@ extend class UaS_SelfBandage {
 
 		// cool grid
 		int gridAlpha = 25;
-		int gridWidth = 120 * hudScale.x;
-		int gridHeight = 120 * hudScale.y;
+		Vector2 gridSize = (120 * hudScale.x, 120 * hudScale.y);
 		Color gridColour = Color(gridAlpha, sb.sbcolour.r, sb.sbcolour.g, sb.sbcolour.b);
 		Vector2 gridPos = (
-			woundsLocation.x - (gridWidth / 2),
-			woundsLocation.y - (gridHeight / 2)
+			woundsLocation.x - (gridSize.x / 2),
+			woundsLocation.y - (gridSize.y / 2)
 		);
 		sb.Fill(
 			gridColour,
 			gridPos.x - (2 * hudScale.x), gridPos.y,
-			gridWidth + (4 * hudScale.x), gridHeight,
+			gridSize.x + (4 * hudScale.x), gridSize.y,
 			sb.DI_SCREEN_CENTER
 		);
-		for (int i = 0; i < gridHeight / 2; i++)
+		for (int i = 0; i < gridSize.y / 2; i++)
 		{
 			sb.Fill(
 				gridColour,
 				gridPos.x, gridPos.y + (i * 2),
-				gridWidth, hudScale.y,
+				gridSize.x, hudScale.y,
 				sb.DI_SCREEN_CENTER
 			);
 		}
@@ -94,13 +100,13 @@ extend class UaS_SelfBandage {
 			sb.Fill(
 				gridColour,
 				gridPos.x + (gridStep.x * i), gridPos.y,
-				hudScale.x, gridHeight,
+				hudScale.x, gridSize.y,
 				sb.DI_SCREEN_CENTER
 			);
 			sb.Fill(
 				gridColour,
 				gridPos.x, gridPos.y + (gridStep.y * i),
-				gridWidth, hudScale.y,
+				gridSize.x, hudScale.y,
 				sb.DI_SCREEN_CENTER
 			);
 		}
@@ -125,11 +131,11 @@ extend class UaS_SelfBandage {
 			if (!wound) { continue; }
 			if (i == woundIndex) { selectedWound = wound; }
 
-			DrawWound(sb, wound, woundsLocation, hudScale);
+			DrawWound(sb, wound, woundsLocation, gridSize, hudScale);
 		}
 
 		// Always display selected wound on top
-		if (selectedWound) { DrawWound(sb, selectedWound, woundsLocation, hudScale); }
+		if (selectedWound) { DrawWound(sb, selectedWound, woundsLocation, gridSize, hudScale); }
 
 		// Wound info
 		Vector2 woundInfoPos = (10 * hudScale.x, baseOffset / 2);
