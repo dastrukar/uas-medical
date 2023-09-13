@@ -154,6 +154,8 @@ extend class UaS_SelfBandage {
 			);
 
 			if (selectedWound.depth <= 0. && selectedWound.patched > 0) {
+				woundInfoPos += (0, padStep);
+
 				if (selectedWound.pressure > 5.0) { statusText = "\c[Green]very tight"; }
 				else if (selectedWound.pressure > 3.5) { statusText = "\c[DarkGreen]tight"; }
 				else if (selectedWound.pressure > 2.0) { statusText = "\c[Gold]a bit tight"; }
@@ -161,15 +163,29 @@ extend class UaS_SelfBandage {
 				else if (selectedWound.pressure > 0.5) { statusText = "\c[Red]somewhat loose"; }
 				else if (selectedWound.pressure > 0.2) { statusText = "\c[DarkRed]loose"; }
 				else { statusText = "\c[Black]very loose"; }
-
 				sb.DrawString(
 					sb.pSmallFont,
 					String.Format("- Bandage feels %s", statusText),
-					woundInfoPos + (0, padStep),
+					woundInfoPos,
 					sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_LEFT,
 					Font.CR_GRAY
 				);
 			}
+
+			woundInfoPos += (0, padStep);
+			if (selectedWound.stabilised >= 100.0) { statusText = "\c[Green]fine"; }
+			else if (selectedWound.stabilised > 75.0) { statusText = "\c[DarkGreen]somewhat fine"; }
+			else if (selectedWound.stabilised > 50.0) { statusText = "\c[Gold]decent"; }
+			else if (selectedWound.stabilised > 25.0) { statusText = "\c[Yellow]not that great"; }
+			else if (selectedWound.stabilised > 5.0) { statusText = "\c[Red]less horrible"; }
+			else { statusText = "\c[DarkRed]horrible"; }
+			sb.DrawString(
+				sb.pSmallFont,
+				String.Format("- It feels %s", statusText),
+				woundInfoPos,
+				sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_LEFT,
+				Font.CR_GRAY
+			);
 		}
 	}
 }
