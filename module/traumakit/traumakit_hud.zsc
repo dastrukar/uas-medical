@@ -126,6 +126,7 @@ extend class UaS_TraumaKit {
 				else if (currentWound.stabilised > 5.0) { tmpStr = "less horrible"; }
 				else { tmpStr = "horrible"; }
 				status.Push("-It seems to be "..GetStatusColor(100 - currentWound.stabilised)..tmpStr);
+				woundInfoOffsetY -= halfStep;
 			}
 			else {
 				status.Push("-The wound is "..GetStatusColor(currentWound.open * 10).."open");
