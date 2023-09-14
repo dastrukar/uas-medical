@@ -56,6 +56,7 @@ extend class UaS_SelfBandage {
 		float textHeight = sb.pSmallFont.mFont.GetHeight() * hudscale.y;
 		float padding = 2 * hudScale.y;
 		float padStep = textHeight + padding;
+		float halfStep = padStep / 2;
 		float baseOffset = padStep * -8;
 
 		// Title
@@ -139,59 +140,48 @@ extend class UaS_SelfBandage {
 
 		// Wound info
 		Vector2 woundInfoPos = (10 * hudScale.x, baseOffset / 2);
-		if (!selectedWound) {
-			sb.DrawString(
-				sb.pSmallFont,
-				"No wound selected.",
-				woundInfoPos,
-				sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_LEFT,
-				Font.CR_DARKGRAY
-			);
-		} else {
+		Array<string> status;
+
+		if (!selectedWound) { status.Push("\c[DarkGray]No wound selected.\c-"); }
+		else {
 			string statusText = "\c[Red]open";
 			if (selectedWound.depth <= 0. && selectedWound.patched > 0) { statusText = "\c[Yellow]patched"; }
 			else if (selectedWound.depth <= 0) { statusText = "\c[Green]sealed"; }
-			sb.DrawString(
-				sb.pSmallFont,
-				String.Format("- The wound is %s", statusText),
-				woundInfoPos,
-				sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_LEFT,
-				Font.CR_GRAY
-			);
+
+			status.Push(String.Format("- The wound is %s", statusText));
 
 			if (selectedWound.depth <= 0. && selectedWound.patched > 0) {
-				woundInfoPos += (0, padStep);
+				woundInfoPos -= (0, halfStep);
 
-				if (selectedWound.pressure > 5.0) { statusText = "\c[Green]very tight"; }
-				else if (selectedWound.pressure > 3.5) { statusText = "\c[DarkGreen]tight"; }
-				else if (selectedWound.pressure > 2.0) { statusText = "\c[Gold]a bit tight"; }
-				else if (selectedWound.pressure > 1.0) { statusText = "\c[Yellow]somewhat tight"; }
-				else if (selectedWound.pressure > 0.5) { statusText = "\c[Red]somewhat loose"; }
-				else if (selectedWound.pressure > 0.2) { statusText = "\c[DarkRed]loose"; }
-				else { statusText = "\c[Black]very loose"; }
-				sb.DrawString(
-					sb.pSmallFont,
-					String.Format("- Bandage feels %s", statusText),
-					woundInfoPos,
-					sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_LEFT,
-					Font.CR_GRAY
-				);
+				if (selectedWound.pressure > 5.0) { statusText = "very tight"; }
+				else if (selectedWound.pressure > 3.5) { statusText = "tight"; }
+				else if (selectedWound.pressure > 2.0) { statusText = "a bit tight"; }
+				else if (selectedWound.pressure > 1.0) { statusText = "somewhat tight"; }
+				else if (selectedWound.pressure > 0.5) { statusText = "somewhat loose"; }
+				else if (selectedWound.pressure > 0.2) { statusText = "loose"; }
+				else { statusText = "very loose"; }
+				status.Push("- Bandage feels "..GetStatusColor(100 - selectedWound.pressure / 5 * 100)..statusText);
 			}
 
-			woundInfoPos += (0, padStep);
-			if (selectedWound.stabilised >= 100.0) { statusText = "\c[Green]fine"; }
-			else if (selectedWound.stabilised > 75.0) { statusText = "\c[DarkGreen]somewhat fine"; }
-			else if (selectedWound.stabilised > 50.0) { statusText = "\c[Gold]decent"; }
-			else if (selectedWound.stabilised > 25.0) { statusText = "\c[Yellow]not that great"; }
-			else if (selectedWound.stabilised > 5.0) { statusText = "\c[Red]less horrible"; }
-			else { statusText = "\c[DarkRed]horrible"; }
+			woundInfoPos -= (0, halfStep);
+			if (selectedWound.stabilised >= 100.0) { statusText = "fine"; }
+			else if (selectedWound.stabilised > 75.0) { statusText = "somewhat fine"; }
+			else if (selectedWound.stabilised > 50.0) { statusText = "decent"; }
+			else if (selectedWound.stabilised > 25.0) { statusText = "not that great"; }
+			else if (selectedWound.stabilised > 5.0) { statusText = "less horrible"; }
+			else { statusText = "horrible"; }
+			status.Push("- It feels "..GetStatusColor(100 - selectedWound.stabilised)..statusText);
+		}
+
+		for (int i = 0; i < status.Size(); i++) {
 			sb.DrawString(
 				sb.pSmallFont,
-				String.Format("- It feels %s", statusText),
+				status[i],
 				woundInfoPos,
 				sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_LEFT,
 				Font.CR_GRAY
 			);
+			woundInfoPos += (0, padStep);
 		}
 	}
 }

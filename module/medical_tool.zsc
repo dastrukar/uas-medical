@@ -36,6 +36,20 @@ class UaS_MedicalTool : HDWeapon {
 		return wh.critwounds[index];
 	}
 
+	ui string GetStatusColor(int amount) {
+		if (amount >= 90) { return "\cm"; } // Black
+		if (amount >= 80) { return "\cr"; } // Dark Red
+		if (amount >= 70) { return "\ca"; } // Brick
+		if (amount >= 60) { return "\cx"; } // Fire
+		if (amount >= 50) { return "\ci"; } // Orange
+		if (amount >= 40) { return "\ck"; } // Yellow
+		if (amount >= 30) { return "\cs"; } // Dark Brown
+		if (amount >= 20) { return "\cq"; } // Dark Green
+		if (amount >= 10) { return "\cd"; } // Green
+		if (amount >= 0) { return "\cd"; } // Grey (wait, isn't this green?)
+		return "\cj"; // White
+	}
+
 	struct StatusInfo {
 		string text;
 		int timeout;
