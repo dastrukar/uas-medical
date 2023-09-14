@@ -116,7 +116,7 @@ extend class UaS_TraumaKit {
 				status.Push("-The wound is "..GetStatusColor(currentWound.open).."closed\c-.");
 			}
 			else if (currentWound.depth <= 0. && currentWound.patched > 0.) {
-				status.Push("-The wound is ".."\c[Yellow]patched\c-");
+				status.Push("-The wound is "..GetStatusColor(currentWound.open * 10).."open but \c[Yellow]patched\c-");
 
 				string tmpStr;
 				if (currentWound.stabilised >= 100.0) { tmpStr = "fine"; }

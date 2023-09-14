@@ -144,8 +144,8 @@ extend class UaS_SelfBandage {
 
 		if (!selectedWound) { status.Push("\c[DarkGray]No wound selected.\c-"); }
 		else {
-			string statusText = "\c[Red]open";
-			if (selectedWound.depth <= 0. && selectedWound.patched > 0) { statusText = "\c[Yellow]patched"; }
+			string statusText = GetStatusColor(currentWound.open * 10).."open\c-";
+			if (selectedWound.depth <= 0. && selectedWound.patched > 0) { statusText = statusText.." but \c[Yellow]patched"; }
 			else if (selectedWound.depth <= 0) { statusText = "\c[Green]sealed"; }
 
 			status.Push(String.Format("- The wound is %s", statusText));
