@@ -115,6 +115,18 @@ extend class UaS_TraumaKit {
 			if (currentWound.open <= 0) {
 				status.Push("-The wound is "..GetStatusColor(currentWound.open).."closed\c-.");
 			}
+			else if (currentWound.depth <= 0. && currentWound.patched > 0.) {
+				status.Push("-The wound is ".."\c[Yellow]patched\c-");
+
+				string tmpStr;
+				if (currentWound.stabilised >= 100.0) { tmpStr = "fine"; }
+				else if (currentWound.stabilised > 75.0) { tmpStr = "somewhat fine"; }
+				else if (currentWound.stabilised > 50.0) { tmpStr = "decent"; }
+				else if (currentWound.stabilised > 25.0) { tmpStr = "not that great"; }
+				else if (currentWound.stabilised > 5.0) { tmpStr = "less horrible"; }
+				else { tmpStr = "horrible"; }
+				status.Push("-It seems to be "..GetStatusColor(100 - currentWound.stabilised)..tmpStr);
+			}
 			else {
 				status.Push("-The wound is "..GetStatusColor(currentWound.open * 10).."open");
 
