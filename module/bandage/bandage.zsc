@@ -39,6 +39,8 @@ class UaS_SelfBandage : UaS_MedicalTool {
 		if (timer >= 0) { --timer; }
 		if (timeout >= 0) { --timeout; }
 		if (timeout <= 0) { ResetAction(); }
+		if (currentMessage.timeout > 0) { --currentMessage.timeout; }
+		else { currentMessage.text = ""; }
 
 		CycleWounds();
 		TryRipBloodbag();
@@ -65,17 +67,27 @@ class UaS_SelfBandage : UaS_MedicalTool {
 		if (owner.player.cmd.buttons & BT_RELOAD && !(owner.player.oldbuttons & BT_RELOAD)) {
 			wh.currentWound = wh.GetNextWound();
 			ResetAction();
+			currentMessage.text = "";
+			currentMessage.timeout = 0;
 		}
 		else if (owner.player.cmd.buttons & BT_ALTRELOAD && !(owner.player.oldbuttons & BT_ALTRELOAD)) {
 			wh.currentWound = wh.GetPrevWound();
 			ResetAction();
+			currentMessage.text = "";
+			currentMessage.timeout = 0;
 		}
 	}
 
 	void TryRipBloodbag() {
 		if (!(owner.player.cmd.buttons & BT_FIREMODE && owner.player.cmd.buttons & BT_ATTACK)) { return; }
-		if (!patient.CountInv("BloodBagWorn")) { return; }
+		if (!patient.CountInv("BloodBagWorn")) {
+			currentMessage.text = "There's no blood bag attached to "..((patient == owner)? "you." : "them.");
+			currentMessage.timeout = 2 * 35;
+			return;
+		}
 
+		currentMessage.text = "Ripping off blood bag...";
+		currentMessage.timeout = 10;
 		if ((timer <= 0 && timeout <= 0) || actionType != ACTION_RIPBLOODBAG) {
 			timeout = 5;
 			progress = 0;

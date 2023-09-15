@@ -200,6 +200,21 @@ extend class UaS_SelfBandage {
 			);
 			toolInfoPos += (0, textHeight);
 		}
+
+		Array<string> msg;
+		currentMessage.text.Split(msg, "\n");
+		Vector2 msgPos = (0, -baseOffset);
+
+		for (int i = 0; i < msg.Size(); i++) {
+			sb.DrawString(
+				sb.pSmallFont,
+				msg[i],
+				msgPos,
+				sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_CENTER,
+				Font.CR_GRAY
+			);
+			msgPos += (0, textHeight);
+		}
 	}
 }
 

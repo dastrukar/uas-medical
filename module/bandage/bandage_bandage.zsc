@@ -24,6 +24,8 @@ extend class UaS_SelfBandage {
 		if (!wh.currentWound) { return; }
 		if (patient == owner && owner.pitch < 45) { owner.pitch += 6; return; }
 
+		currentMessage.text = "Attempting to bandage wound...";
+		currentMessage.timeout = 10;
 		if ((timer <= 0 && timeout <= 0) || actionType != ACTION_BANDAGE) {
 			timeout = 5;
 			progress = 0;
