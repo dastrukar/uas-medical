@@ -9,9 +9,13 @@ extend class UaS_SelfBandage {
 		// location.x is the angle that you got hit from
 		// location.y is the height that you got hit at
 		Vector2 offset = (gridSize.x / 2.5, gridSize.y / 2.5);
+		Vector2 location = (
+			wound.location.x,
+			min(1, max(0, wound.location.y))
+		);
 		Vector2 woundPosition = (
-			woundsLocation.x + (offset.x * sin(wound.location.x)) * hudScale.x,
-			woundsLocation.y + (offset.y - (offset.y + offset.y) * wound.location.y) * hudScale.y
+			woundsLocation.x + (offset.x * sin(location.x)) * hudScale.x,
+			woundsLocation.y + (offset.y - (offset.y + offset.y) * location.y) * hudScale.y
 		);
 		bool selected = (wound == wh.currentWound);
 		float woundAlpha = (selected)? 1.00 : 0.75;
