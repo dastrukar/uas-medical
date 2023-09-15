@@ -38,9 +38,13 @@ class UaS_WoundHandler : Inventory {
 		for (int i = 0; i < critwounds.Size(); i++) {
 			if (critwounds[i]) { continue; }
 
-			if (currentWound == critwounds[i])
-				currentWound = critwounds[min(i, critwounds.Size())];
+			int newWoundIndex = -1;
+			if (currentWound == critwounds[i]) { newWoundIndex = i; }
+
 			critwounds.Delete(i--);
+
+			newWoundIndex = min(i, critwounds.Size() - 1);
+			if (newWoundIndex >= 0) { currentWound = critwounds[newWoundIndex]; }
 		}
 
 		// Override HDBleedingWound
