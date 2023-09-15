@@ -181,6 +181,21 @@ extend class UaS_SelfBandage {
 			);
 			woundInfoPos += (0, padStep);
 		}
+
+		Array<string> trueStatusMessage;
+		statusMessage.Split(trueStatusMessage, "\n");
+		Vector2 toolInfoPos = (woundInfoPos.x,  baseOffset / -2 - textHeight / 2 * trueStatusMessage.Size());
+
+		for (int i = 0; i < trueStatusMessage.Size(); i++) {
+			sb.DrawString(
+				sb.pSmallFont,
+				trueStatusMessage[i],
+				toolInfoPos,
+				sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_LEFT,
+				Font.CR_GRAY
+			);
+			toolInfoPos += (0, textHeight);
+		}
 	}
 }
 

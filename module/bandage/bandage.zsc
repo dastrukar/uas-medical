@@ -3,7 +3,12 @@ class UaS_SelfBandage : UaS_MedicalTool {
 	int progress;
 	int timer;
 	int timeout;
+	string statusMessage;
 	BandageActions actionType;
+
+	Default {
+		Tag "self bandage";
+	}
 
 	override void PostBeginPlay() {
 		Super.PostBeginPlay();
@@ -11,6 +16,10 @@ class UaS_SelfBandage : UaS_MedicalTool {
 		timer = 0;
 		progress = 0;
 		actionType = ACTION_NONE;
+	}
+
+	override string GetHelpText() {
+		return WEPHELP_RELOAD.."/"..WEPHELP_ALTRELOAD.."  Cycle wounds\n";
 	}
 
 	void ResetAction() {
@@ -45,7 +54,6 @@ class UaS_SelfBandage : UaS_MedicalTool {
 	void CycleWounds() {
 		if (wh.critwounds.Size() == 0) { return; }
 
-		int idx;
 		if (owner.player.cmd.buttons & BT_RELOAD && !(owner.player.oldbuttons & BT_RELOAD)) {
 			wh.currentWound = wh.GetNextWound();
 			ResetAction();

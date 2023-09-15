@@ -110,9 +110,9 @@ class UaS_TraumaKit : UaS_MedicalTool {
 	}
 
 	void CycleWounds() {
-		if (wh.critwounds.size() == 0) { return; }
 		if (
-			(!UaS_TraumaKit_AltControls.GetBool() && !(owner.player.cmd.buttons & BT_FIREMODE))
+			wh.critwounds.Size() == 0
+			|| (!UaS_TraumaKit_AltControls.GetBool() && !(owner.player.cmd.buttons & BT_FIREMODE))
 			|| (UaS_TraumaKit_AltControls.GetBool() && (owner.player.cmd.buttons & BT_FIREMODE))
 		) { return; }
 		if (GetCycleInput() == 1) { wh.currentWound = wh.GetNextWound(); }
