@@ -19,7 +19,10 @@ class UaS_SelfBandage : UaS_MedicalTool {
 	}
 
 	override string GetHelpText() {
-		return WEPHELP_RELOAD.."/"..WEPHELP_ALTRELOAD.."  Cycle wounds\n";
+		return
+			WEPHELP_RELOAD.."/"..WEPHELP_ALTRELOAD.."  Cycle wounds\n"
+			.."...while holding "..WEPHELP_FIREMODE..":\n"
+			.."  "..WEPHELP_FIRE.."  Remove blood feeder";
 	}
 
 	void ResetAction() {
@@ -38,6 +41,7 @@ class UaS_SelfBandage : UaS_MedicalTool {
 		if (timeout <= 0) { ResetAction(); }
 
 		CycleWounds();
+		TryRipBloodbag();
 
 		switch (weaponstatus[0]) {
 			default:
@@ -69,6 +73,23 @@ class UaS_SelfBandage : UaS_MedicalTool {
 	}
 
 	void TryRipBloodbag() {
+		if (!(owner.player.cmd.buttons & BT_FIREMODE && owner.player.cmd.buttons & BT_ATTACK)) { return; }
+		if (!patient.CountInv("BloodBagWorn")) { return; }
+
+		if ((timer <= 0 && timeout <= 0) || actionType != ACTION_RIPBLOODBAG) {
+			timeout = 5;
+			progress = 0;
+			actionType = ACTION_RIPBLOODBAG;
+			BandageEffect(10, 15);
+			owner.A_StartSound("bandage/pocket", CHAN_BODY, CHANF_OVERLAP);
+			return;
+		}
+		else if (timer > 0 && timeout > 0) { timeout = 5; return; }
+
+		patient.A_SetBlend("7a 3a 18", 0.1, 4);
+		HDPlayerPawn(owner).A_MuzzleClimb((0, 2), (0, 0), (0, 0), (0, 0));
+		HDPlayerPawn.PlaySkinSound(patient, SKINSOUND_MEDS, "*usemeds");
+		patient.DropInventory(patient.FindInventory("BloodBagWorn"));
 	}
 
 	enum BandageTypes {
@@ -80,5 +101,6 @@ class UaS_SelfBandage : UaS_MedicalTool {
 		ACTION_NONE,
 		ACTION_BANDAGE,
 		ACTION_RIPBANDAGE,
+		ACTION_RIPBLOODBAG,
 	};
 }
