@@ -73,6 +73,16 @@ extend class UaS_SelfBandage {
 			scale: hudScale
 		);
 
+		// Patient
+		sb.DrawString(
+			sb.pSmallFont,
+			"Treating "..patient.player.GetUsername(),
+			(0, baseOffset + textHeight),
+			sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_CENTER,
+			Font.CR_GRAY,
+			scale: hudScale
+		);
+
 		// Show wounds
 		Vector2 woundsLocation = (-70 * hudScale.x, 0);
 
