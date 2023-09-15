@@ -1,0 +1,96 @@
+extend class UaS_SelfBandage {
+	void HandleBandage() {
+		weaponStatus = "\c[Gray]Bandage\n";
+		weaponStatus = weaponStatus.."\c[DarkGray]Lorem Ipsum";
+
+		if (owner.player.cmd.buttons & BT_ATTACK) { TryBandage(); }
+		else if (owner.player.cmd.buttons & BT_ALTATTACK) { TryRipBandage(); }
+	}
+
+	void BandageWound(float toPatch, float pressure) {
+		if (!wh.currentWound) { return; }
+
+		wh.currentWound.Patch(toPatch);
+		wh.currentWound.pressure += pressure;
+	}
+
+	void BandageEffect(int min, int max) {
+		timer = Random(min, max);
+		HDPlayerPawn(owner).A_MuzzleClimb((FRandom(-1.5, 1.8), FRandom(-2.4, 2.4)), (0, 0), (0, 0), (0, 0));
+		owner.A_StartSound("bandage/rustle", CHAN_BODY, CHANF_OVERLAP);
+	}
+
+	void TryBandage() {
+		if (!wh.currentWound) { return; }
+		if (patient == owner && owner.pitch < 45) { owner.pitch += 6; return; }
+
+		if ((timer <= 0 && timeout <= 0) || actionType != ACTION_BANDAGE) {
+			timeout = 5;
+			progress = 0;
+			actionType = ACTION_BANDAGE;
+			owner.A_StartSound("bandage/rip", CHAN_WEAPON, CHANF_OVERLAP, 0.4);
+			BandageEffect(5, 10);
+			return;
+		}
+		else if (timer <= 0 && timeout > 0) { ++progress; }
+		else { timeout = 5; return; }
+
+		switch (progress) {
+			case 1:
+				BandageEffect(30, 40);
+				break;
+
+			case 2:
+				BandageEffect(30, 35);
+				break;
+
+			case 3:
+				BandageEffect(15, 20);
+				break;
+
+			default:
+				BandageEffect(4, 8);
+				owner.A_StartSound("weapons/pocket", CHAN_BODY, CHANF_OVERLAP);
+				owner.A_ChangeVelocity(FRandom(-0.3, 0.3), FRandom(-0.3, 0.3), FRandom(-1, 2));
+
+				progress = 0;
+				BandageWound(FRandom(20, 30), FRandom(0.25, 0.95));
+				break;
+		}
+	}
+
+	void TryRipBandage() {
+		if (!wh.currentWound || wh.currentWound.patched <= 0.) { return; }
+		if (patient == owner && owner.pitch < 45) { owner.pitch += 6; return; }
+
+		if ((timer <= 0 && timeout <= 0) || actionType != ACTION_RIPBANDAGE) {
+			timeout = 5;
+			progress = 0;
+			actionType = ACTION_RIPBANDAGE;
+			BandageEffect(5, 10);
+			return;
+		}
+		else if (timer <= 0 && timeout > 0) { ++progress; }
+		else { timeout = 5; return; }
+
+		switch (progress) {
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+				BandageEffect(4, 10);
+				break;
+
+			default:
+				BandageEffect(0, 0);
+				owner.A_StartSound("bandage/rip", CHAN_BODY, CHANF_OVERLAP);
+				owner.A_ChangeVelocity(FRandom(-0.3, 0.3), FRandom(-0.3, 0.3), FRandom(-1, 2));
+
+				progress = 0;
+				wh.currentWound.depth += wh.currentWound.patched;
+				wh.currentWound.patched = 0;
+				wh.currentWound.pressure = 0;
+				break;
+		}
+	}
+}

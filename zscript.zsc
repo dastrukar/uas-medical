@@ -9,6 +9,7 @@ version "4.9"
 
 #include "module/bandage/bandage.zsc"
 #include "module/bandage/bandage_hud.zsc"
+#include "module/bandage/bandage_bandage.zsc"
 
 #include "module/traumakit/traumakit.zsc"
 #include "module/traumakit/traumakit_handler.zsc"
