@@ -1,7 +1,7 @@
 extend class UaS_SelfBandage {
 	void HandleBandage() {
-		weaponStatus = "\c[Gray]Bandage\n";
-		weaponStatus = weaponStatus.."\c[DarkGray]Lorem Ipsum";
+		statusMessage = "\c[Gray]Bandage\n";
+		statusMessage = statusMessage.."\c[DarkGray]Lorem Ipsum";
 
 		if (owner.player.cmd.buttons & BT_ATTACK) { TryBandage(); }
 		else if (owner.player.cmd.buttons & BT_ALTATTACK) { TryRipBandage(); }
