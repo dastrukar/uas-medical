@@ -24,9 +24,11 @@ class UaS_MedicalDebug : EventHandler {
 			whInfo, hdp.bloodloss, double(hdp.bloodloss) / (HDCONST_BLOODBAGAMOUNT<<2), hdp.burncount, (sf)? sf.Amount : 0, hdp.oldwoundcount, hdp.CountInv("IsMoving")
 		);
 
+		// wounds
 		for (int i = 0; i < wh.critwounds.Size(); i++) {
 			if (!wh.critwounds[i]) { continue; }
 			let wi = UaS_Wound(wh.critwounds[i]);
+			if (wi == wh.currentWound) { whInfo = whInfo.."> "; }
 			whInfo = String.Format(
 				"%s%i: open %f | cavity %f | pressure %f | stable? %f",
 				whInfo, i, wi.open, wi.cavity, wi.pressure, wi.stabilised
