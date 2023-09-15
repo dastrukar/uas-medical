@@ -2,7 +2,6 @@
 class UaS_MedicalTool : HDWeapon {
 	StatusInfo currentMessage; // used for UI messages
 
-	UaS_Wound currentWound;
 	UaS_WoundHandler wh;
 	UaS_MedicalWheel wheel;
 	HDPlayerPawn patient, lastpatient;
@@ -27,7 +26,7 @@ class UaS_MedicalTool : HDWeapon {
 
 		wh = UaS_WoundHandler(patient.FindInventory('UaS_WoundHandler'));
 		if (!wh) { console.printf("No wound handler!"); return; }
-		if (patient != lastpatient) { currentWound = null; }
+		if (patient != lastpatient) { wh.currentWound = null; }
 		lastpatient = patient;
 	}
 

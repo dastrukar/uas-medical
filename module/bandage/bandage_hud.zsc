@@ -13,12 +13,12 @@ extend class UaS_SelfBandage {
 			woundsLocation.x + (offset.x * sin(wound.location.x)) * hudScale.x,
 			woundsLocation.y + (offset.y - (offset.y + offset.y) * wound.location.y) * hudScale.y
 		);
-		bool selected = (wound == currentWound);
+		bool selected = (wound == wh.currentWound);
 		float woundAlpha = (selected)? 1.00 : 0.75;
 		Vector2 woundScale = ((selected)? 1.00 : 0.75) * hudScale;
 		int woundColour;
-		if (wound.depth <= 0.) { woundColour = (wound == currentWound)? Font.CR_GOLD : Font.CR_YELLOW; }
-		else { woundColour = (wound == currentWound)? Font.CR_RED : Font.CR_DARKRED; }
+		if (wound.depth <= 0.) { woundColour = (wound == wh.currentWound)? Font.CR_GOLD : Font.CR_YELLOW; }
+		else { woundColour = (wound == wh.currentWound)? Font.CR_RED : Font.CR_DARKRED; }
 
 		sb.DrawString(
 			sb.pSmallFont,
@@ -144,7 +144,7 @@ extend class UaS_SelfBandage {
 
 		if (!selectedWound) { status.Push("\c[DarkGray]No wound selected.\c-"); }
 		else {
-			string statusText = GetStatusColor(currentWound.open * 10).."open\c-";
+			string statusText = GetStatusColor(wh.currentWound.open * 10).."open\c-";
 			if (selectedWound.depth <= 0. && selectedWound.patched > 0) { statusText = statusText.." but \c[Yellow]patched"; }
 			else if (selectedWound.depth <= 0) { statusText = "\c[Green]sealed"; }
 

@@ -1,5 +1,6 @@
 class UaS_WoundHandler : Inventory {
-	array<UaS_Wound> critwounds;
+	Array<UaS_Wound> critwounds;
+	UaS_Wound currentWound; // all wound-related tools should use this
 
 	default {
 		+INVENTORY.PERSISTENTPOWER;

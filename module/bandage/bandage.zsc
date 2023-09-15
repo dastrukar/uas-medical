@@ -56,19 +56,19 @@ class UaS_SelfBandage : UaS_MedicalTool {
 			ResetAction();
 		}
 
-		if (woundIndex < 0 || (!currentWound && woundIndex >= wh.critWounds.Size())) {
+		if (woundIndex < 0 || (!wh.currentWound && woundIndex >= wh.critWounds.Size())) {
 			woundIndex = wh.critWounds.Size() - 1;
 		}
 		else if (woundIndex >= wh.critWounds.Size()) { woundIndex = 0; }
 
-		currentWound = GetWound(woundIndex);
+		wh.currentWound = GetWound(woundIndex);
 	}
 
 	void BandageWound(float toPatch, float pressure) {
-		if (!currentWound) { return; }
+		if (!wh.currentWound) { return; }
 
-		currentWound.Patch(toPatch);
-		currentWound.pressure += pressure;
+		wh.currentWound.Patch(toPatch);
+		wh.currentWound.pressure += pressure;
 	}
 
 	void BandageEffect(int min, int max) {
@@ -78,7 +78,7 @@ class UaS_SelfBandage : UaS_MedicalTool {
 	}
 
 	void TryBandage() {
-		if (!currentWound) { return; }
+		if (!wh.currentWound) { return; }
 		if (patient == owner && owner.pitch < 45) { owner.pitch += 6; return; }
 
 		if ((timer <= 0 && timeout <= 0) || actionType != ACTION_BANDAGE) {
@@ -117,7 +117,7 @@ class UaS_SelfBandage : UaS_MedicalTool {
 	}
 
 	void TryRipBandage() {
-		if (!currentWound || currentWound.patched <= 0.) { return; }
+		if (!wh.currentWound || wh.currentWound.patched <= 0.) { return; }
 		if (patient == owner && owner.pitch < 45) { owner.pitch += 6; return; }
 
 		if ((timer <= 0 && timeout <= 0) || actionType != ACTION_RIPBANDAGE) {
@@ -144,9 +144,9 @@ class UaS_SelfBandage : UaS_MedicalTool {
 				owner.A_ChangeVelocity(FRandom(-0.3, 0.3), FRandom(-0.3, 0.3), FRandom(-1, 2));
 
 				progress = 0;
-				currentWound.depth += currentWound.patched;
-				currentWound.patched = 0;
-				currentWound.pressure = 0;
+				wh.currentWound.depth += wh.currentWound.patched;
+				wh.currentWound.patched = 0;
+				wh.currentWound.pressure = 0;
 				break;
 		}
 	}
