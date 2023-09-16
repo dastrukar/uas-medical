@@ -155,12 +155,12 @@ extend class UaS_Wound {
 		nw.open = hdbw.depth;
 		nw.timer = (random[uas_wi](10, 30) * 35);
 		nw.description = WoundDescription(hdbw.depth);
-		nw.pressure = 0;
+		nw.pressure = (hdbw.patched > 0.)? frandom(0.5, hdbw.patched + 0.5) : 0; // Don't let bandaged wounds just fall off instantly
 		nw.stabilised = 0;
 
 		// Inherit
 		nw.bleeder = hdbw.bleeder;
-		nw.source = nw.source;
+		nw.source = hdbw.source;
 		nw.depth = hdbw.depth; // How big is the wound?
 		nw.width = hdbw.width; // Affects bleedrate, somewhat
 		nw.patched = hdbw.patched;
