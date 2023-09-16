@@ -21,7 +21,7 @@ extend class UaS_SelfBandage {
 	}
 
 	void TryBandage() {
-		if (!wh.currentWound) { return; }
+		if (CheckCovered() || !wh.currentWound) { return; }
 		if (patient == owner && owner.pitch < 45) { owner.pitch += 6; return; }
 		if (patient.CountInv("IsMoving")) {
 			currentMessage.text =
@@ -68,7 +68,7 @@ extend class UaS_SelfBandage {
 	}
 
 	void TryRipBandage() {
-		if (!wh.currentWound || wh.currentWound.patched <= 0.) { return; }
+		if (CheckCovered() || !wh.currentWound || wh.currentWound.patched <= 0.) { return; }
 		if (patient == owner && owner.pitch < 45) { owner.pitch += 6; return; }
 		if (patient.CountInv("IsMoving")) {
 			currentMessage.text =
