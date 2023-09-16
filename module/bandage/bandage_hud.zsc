@@ -20,9 +20,6 @@ extend class UaS_SelfBandage {
 		bool selected = (wound == wh.currentWound);
 		float woundAlpha = (selected)? 1.00 : 0.75;
 		Vector2 woundScale = ((selected)? 1.00 : 0.75) * hudScale;
-		int woundColour;
-		if (wound.depth <= 0.) { woundColour = (wound == wh.currentWound)? Font.CR_GOLD : Font.CR_YELLOW; }
-		else { woundColour = (wound == wh.currentWound)? Font.CR_RED : Font.CR_DARKRED; }
 
 		sb.DrawString(
 			sb.pSmallFont,
