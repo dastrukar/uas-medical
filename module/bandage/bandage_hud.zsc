@@ -221,7 +221,7 @@ extend class UaS_SelfBandage {
 				msg[i],
 				msgPos,
 				sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_CENTER,
-				Font.CR_GRAY
+				Font.CR_DARKGRAY
 			);
 			msgPos += (0, textHeight);
 		}
