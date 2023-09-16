@@ -175,6 +175,7 @@ extend class UaS_Wound {
 		nw.depth = hdbw.depth; // How big is the wound?
 		nw.width = hdbw.width; // Affects bleedrate, somewhat
 		nw.patched = hdbw.patched;
+		nw.oldPatched = nw.patched;
 		nw.sealed = hdbw.sealed;
 		nw.regenrate = 0; // avgstat will influence this
 		nw.damagetype = hdbw.damagetype;
