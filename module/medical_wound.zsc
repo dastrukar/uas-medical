@@ -20,6 +20,9 @@ class UaS_Wound : HDBleedingWound {
 	double pressure;
 	double tightness;
 
+	// Incap related
+	double oldPatched;
+
 	override void Tick() {
 		// Heal some old wounds before getting destroyed?
 		if (
@@ -35,6 +38,12 @@ class UaS_Wound : HDBleedingWound {
 
 		Super.Tick();
 		TryStabilise();
+
+		// Make sure bandage doesn't fall off when trying to bandage yourself while incap
+		if (HDPlayerPawn(bleeder) && HDIncapWeapon(HDPlayerPawn(bleeder).Player.ReadyWeapon) && pressure <= 0.) {
+			float delta = patched - oldPatched;
+			if (delta > 0.) { pressure = delta / frandom(1.5, 2.5); }
+		}
 
 		// Bandage gets more loose over time
 		if (random(0, 1)) {
@@ -67,6 +76,8 @@ class UaS_Wound : HDBleedingWound {
 
 			timer = random[uas_wi](2,5) * (35 + open);
 		}
+
+		oldPatched = patched;
 	}
 
 	// If no pressure is being applied, the bandage is too loose and begins to fall off over time.
