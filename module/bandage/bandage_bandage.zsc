@@ -23,6 +23,13 @@ extend class UaS_SelfBandage {
 	void TryBandage() {
 		if (!wh.currentWound) { return; }
 		if (patient == owner && owner.pitch < 45) { owner.pitch += 6; return; }
+		if (patient.CountInv("IsMoving")) {
+			currentMessage.text =
+				"You need "..((patient == owner)? "" : "them ")
+				.."to stay still to bandage "..((patient == owner)? "yourself!" : "them!");
+			currentMessage.timeout = 2 * 35;
+			return;
+		}
 
 		currentMessage.text = "Attempting to bandage wound...";
 		currentMessage.timeout = 10;
@@ -49,7 +56,6 @@ extend class UaS_SelfBandage {
 			case 3:
 				BandageEffect(15, 20);
 				break;
-
 			default:
 				BandageEffect(4, 8);
 				patient.A_StartSound("weapons/pocket", CHAN_BODY, CHANF_OVERLAP);
@@ -64,6 +70,13 @@ extend class UaS_SelfBandage {
 	void TryRipBandage() {
 		if (!wh.currentWound || wh.currentWound.patched <= 0.) { return; }
 		if (patient == owner && owner.pitch < 45) { owner.pitch += 6; return; }
+		if (patient.CountInv("IsMoving")) {
+			currentMessage.text =
+				"You need "..((patient == owner)? "" : "them ")
+				.."to stay still to rip off "..((patient == owner)? "your " : "their ").."bandage!";
+			currentMessage.timeout = 2 * 35;
+			return;
+		}
 
 		if ((timer <= 0 && timeout <= 0) || actionType != ACTION_RIPBANDAGE) {
 			timeout = 5;
