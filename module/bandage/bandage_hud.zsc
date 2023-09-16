@@ -172,7 +172,7 @@ extend class UaS_SelfBandage {
 				else if (wh.currentWound.pressure > 0.5) { statusText = "somewhat loose"; }
 				else if (wh.currentWound.pressure > 0.2) { statusText = "loose"; }
 				else { statusText = "very loose"; }
-				status.Push("- Bandage feels "..GetStatusColor(100 - wh.currentWound.pressure / 5 * 100)..statusText);
+				status.Push("- Bandage feels "..GetStatusColor(max(0, 100 - wh.currentWound.pressure / 5 * 100))..statusText);
 			}
 
 			woundInfoPos -= (0, halfStep);
