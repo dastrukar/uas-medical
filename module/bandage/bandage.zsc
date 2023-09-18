@@ -4,6 +4,7 @@ class UaS_SelfBandage : UaS_MedicalTool {
 	int timer;
 	int timeout;
 	string statusMessage;
+	string toolHelpText;
 	BandageActions actionType;
 
 	Default {
@@ -16,13 +17,16 @@ class UaS_SelfBandage : UaS_MedicalTool {
 		timer = 0;
 		progress = 0;
 		actionType = ACTION_NONE;
+		toolHelpText = "";
 	}
 
 	override string GetHelpText() {
 		return
 			WEPHELP_RELOAD.."/"..WEPHELP_ALTRELOAD.."  Cycle wounds\n"
-			.."...while holding "..WEPHELP_FIREMODE..":\n"
-			.."  "..WEPHELP_FIRE.."  Remove blood feeder";
+			..WEPHELP_FIREMODE.."  Hold and ...\n"
+			.."  +"..WEPHELP_FIRE.."  Remove blood feeder\n"
+			..WEPHELP_ZOOM.."  Treat another player\n\n"
+			..toolHelpText;
 	}
 
 	void ResetAction() {
@@ -50,6 +54,10 @@ class UaS_SelfBandage : UaS_MedicalTool {
 				HandleBandage();
 				break;
 		}
+
+		// update helptext
+		let hdp = HDPlayerPawn(owner);
+		if (hdp) { hdp.wephelptext = "\cu"..GetTag().."\n"..GetHelpText(); }
 		/*
 		if (
 			timer <= 0

@@ -3,6 +3,10 @@ extend class UaS_SelfBandage {
 		statusMessage = "\c[Gray]Bandage\n";
 		statusMessage = statusMessage.."\c[DarkGray]Lorem Ipsum";
 
+		toolHelpText =
+			WEPHELP_FIRE.."  Bandage wound\n"
+			..WEPHELP_ALTFIRE.."  Rip bandage\n";
+
 		if (owner.player.cmd.buttons & BT_FIREMODE) { return; }
 		if (owner.player.cmd.buttons & BT_ATTACK) { TryBandage(); }
 		else if (owner.player.cmd.buttons & BT_ALTATTACK) { TryRipBandage(); }
