@@ -28,7 +28,12 @@ extend class UaS_SelfBandage {
 	void TryBandage() {
 		if (CheckCovered() || !wh.currentWound) { return; }
 		if (patient == owner && owner.pitch < 45) { owner.pitch += 6; return; }
-		if (patient.CountInv("IsMoving") >= 4) {
+		if (wh.currentWound.depth <= 0. && wh.currentWound.patched <= 0.) {
+			currentMessage.text = "Nothing to be done here.";
+			currentMessage.timeout = 2 * 35;
+			return;
+		}
+		else if (patient.CountInv("IsMoving") >= 4) {
 			currentMessage.text =
 				"You need "..((patient == owner)? "" : "them ")
 				.."to stay still to bandage "..((patient == owner)? "yourself!" : "them!");
@@ -73,9 +78,14 @@ extend class UaS_SelfBandage {
 	}
 
 	void TryRipBandage() {
-		if (CheckCovered() || !wh.currentWound || wh.currentWound.patched <= 0.) { return; }
+		if (CheckCovered() || !wh.currentWound) { return; }
 		if (patient == owner && owner.pitch < 45) { owner.pitch += 6; return; }
-		if (patient.CountInv("IsMoving") >= 4) {
+		if (wh.currentWound.patched <= 0.) {
+			currentMessage.text = "Nothing to be done here.";
+			currentMessage.timeout = 2 * 35;
+			return;
+		}
+		else if (patient.CountInv("IsMoving") >= 4) {
 			currentMessage.text =
 				"You need "..((patient == owner)? "" : "them ")
 				.."to stay still to rip off "..((patient == owner)? "your " : "their ").."bandage!";
@@ -83,6 +93,8 @@ extend class UaS_SelfBandage {
 			return;
 		}
 
+		currentMessage.text = "Ripping off bandage...";
+		currentMessage.timeout = 10;
 		if ((timer <= 0 && timeout <= 0) || actionType != ACTION_RIPBANDAGE) {
 			timeout = 5;
 			progress = 0;
