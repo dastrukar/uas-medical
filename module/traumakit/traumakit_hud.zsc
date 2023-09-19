@@ -209,7 +209,7 @@ extend class UaS_TraumaKit {
 		// Tool list
 		float toolListSpacing = 24 * hudscale.x;
 		float toolListOffsetX = toolListSpacing * -3;
-		float toolListOffsetY = baseOffset + (4 * textHeight) + (6 * padStep);
+		float toolListOffsetY = baseOffset + (4 * textHeight) + (7 * padStep);
 		Array<String> toolIcons;
 		for (int i = 0; i <= T_SCALPEL; i++) {
 			string toolName = String.Format(
@@ -239,7 +239,7 @@ extend class UaS_TraumaKit {
 		}
 
 		// Tool info
-		float toolInfoOffset = baseOffset + (4 * textHeight) + (7 * padStep);
+		float toolInfoOffset = baseOffset + (4 * textHeight) + (8 * padStep);
 		Array<string> trueStatusMessage;
 		statusMessage.Split(trueStatusMessage, "\n"); // it just works
 
