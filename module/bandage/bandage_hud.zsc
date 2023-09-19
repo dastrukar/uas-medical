@@ -22,9 +22,10 @@ extend class UaS_SelfBandage {
 		Vector2 woundScale = ((selected)? 1.00 : 0.75) * hudScale;
 
 		// stability (always green when sealed)
+		string symbol = (selected)? "X" : ((wound.open > 0.)? "o" : "-");
 		sb.DrawString(
 			sb.pSmallFont,
-			GetStatusColor(100 - ((wound.open > 0.)? wound.stabilised : 100))..((selected)? "X" : "o"),
+			GetStatusColor(100 - ((wound.open > 0.)? wound.stabilised : 100))..symbol,
 			woundPosition,
 			sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_CENTER,
 			(selected)? Font.CR_RED : Font.CR_DARKRED,
