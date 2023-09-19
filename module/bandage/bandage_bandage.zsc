@@ -1,7 +1,7 @@
 extend class UaS_SelfBandage {
 	void HandleBandage() {
 		statusMessage = "\c[Gray]Bandage\n";
-		statusMessage = statusMessage.."\c[DarkGray]Lorem Ipsum";
+		statusMessage = statusMessage.."\c[DarkGray]Useful if you're bleeding out.";
 
 		toolHelpText =
 			WEPHELP_FIRE.."  Bandage wound\n"
