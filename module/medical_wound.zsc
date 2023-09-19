@@ -52,6 +52,8 @@ class UaS_Wound : HDBleedingWound {
 			pressure = max(pressure - frandom(0, maxPressureLoss), 0);
 		}
 
+		if (pressure > 0. && patched <= 0.) { pressure = 0; }
+
 		// depth doesn't really equal to wound being open
 		open = depth + patched;
 
