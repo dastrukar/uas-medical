@@ -66,13 +66,14 @@ extend class UaS_SelfBandage {
 			case 3:
 				BandageEffect(15, 20);
 				break;
+
 			default:
 				BandageEffect(4, 8);
 				patient.A_StartSound("weapons/pocket", CHAN_BODY, CHANF_OVERLAP);
 				patient.A_ChangeVelocity(FRandom(-0.3, 0.3), FRandom(-0.3, 0.3), FRandom(-1, 2));
 
 				progress = 0;
-				BandageWound(FRandom(20, 30), FRandom(0.25, 0.95));
+				BandageWound(FRandom(5, 15), FRandom(0.25, 0.95));
 				break;
 		}
 	}
