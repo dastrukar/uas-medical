@@ -21,24 +21,60 @@ extend class UaS_SelfBandage {
 		float woundAlpha = (selected)? 1.00 : 0.75;
 		Vector2 woundScale = ((selected)? 1.00 : 0.75) * hudScale;
 
+		// stability (always green when sealed)
 		sb.DrawString(
 			sb.pSmallFont,
-			"X",
+			GetStatusColor(100 - ((wound.open > 0.)? wound.stabilised : 100))..((selected)? "X" : "o"),
 			woundPosition,
 			sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_CENTER,
 			(selected)? Font.CR_RED : Font.CR_DARKRED,
 			alpha: woundAlpha,
 			scale: woundScale
 		);
-		sb.DrawString(
-			sb.pSmallFont,
-			"X",
-			woundPosition,
-			sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_CENTER,
-			(selected)? Font.CR_GOLD : Font.CR_YELLOW,
-			alpha: woundAlpha * wound.pressure / 5,
-			scale: woundScale
-		);
+
+		// bleeding?
+		if (wound.depth > 0.) {
+			let blud = TexMan.CheckForTexture("BLUDC0");
+			Vector2 bludScale = woundScale * log(wound.depth + 1) / 2;
+			Vector2 bludOffset = (
+				sb.pSmallFont.mFont.GetCharWidth("X") / 2 * woundScale.x,
+				sb.pSmallFont.mFont.GetHeight() / 2 * woundScale.y
+			);
+
+			sb.DrawTexture(
+				blud,
+				woundPosition + bludOffset,
+				sb.DI_SCREEN_CENTER | sb.DI_ITEM_CENTER,
+				woundAlpha - 0.25,
+				scale: bludScale
+			);
+		}
+
+		// pressure
+		if (wound.pressure >= 0.) {
+			int count = 0;
+			int barRed = 255;
+			int barGreen = 0;
+			float barHeight = sb.pSmallFont.mFont.GetHeight() / 5 * woundScale.y;
+			float offset = 5 * barHeight;
+			if (wound.pressure > 5.0) { ++count; }
+			if (wound.pressure > 3.5) { ++count; }
+			if (wound.pressure > 2.0) { ++count; }
+			if (wound.pressure > 1.0) { ++count; }
+			if (wound.pressure > 0.0) { ++count; }
+
+			for (int i = 0; i < count; i++) {
+				sb.Fill(
+					Color(255, barRed, barGreen, 0),
+					woundPosition.x - sb.pSmallFont.mFont.GetCharWidth("X") / 2, woundPosition.y + offset,
+					1.5 * hudScale.x, barHeight,
+					sb.DI_SCREEN_CENTER
+				);
+				barRed -= 51;
+				barGreen += 51;
+				offset -= barHeight;
+			}
+		}
 	}
 
 	override void DrawHUDStuff(HDStatusBar sb, HDWeapon hdw, HDPlayerPawn hpl) {
@@ -59,13 +95,15 @@ extend class UaS_SelfBandage {
 		float padStep = textHeight + padding;
 		float halfStep = padStep / 2;
 		float baseOffset = padStep * -8;
+		int baseFlags = sb.DI_SCREEN_CENTER;
 
 		// Title
+		int titleFlags = baseFlags | sb.DI_TEXT_ALIGN_CENTER;
 		sb.DrawString(
 			sb.pSmallFont,
 			"--- Bandaging ---",
 			(0, baseOffset),
-			sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_CENTER,
+			titleFlags,
 			Font.CR_GRAY,
 			scale: hudScale
 		);
@@ -75,7 +113,7 @@ extend class UaS_SelfBandage {
 			sb.pSmallFont,
 			"Treating "..patient.player.GetUsername(),
 			(0, baseOffset + textHeight),
-			sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_CENTER,
+			titleFlags,
 			Font.CR_GRAY,
 			scale: hudScale
 		);
@@ -91,11 +129,12 @@ extend class UaS_SelfBandage {
 			woundsLocation.x - (gridSize.x / 2),
 			woundsLocation.y - (gridSize.y / 2)
 		);
+		int gridFlags = baseFlags;
 		sb.Fill(
 			gridColour,
 			gridPos.x - (2 * hudScale.x), gridPos.y,
 			gridSize.x + (4 * hudScale.x), gridSize.y,
-			sb.DI_SCREEN_CENTER
+			gridFlags
 		);
 		for (int i = 0; i < gridSize.y / 2; i++)
 		{
@@ -103,7 +142,7 @@ extend class UaS_SelfBandage {
 				gridColour,
 				gridPos.x, gridPos.y + (i * 2),
 				gridSize.x, hudScale.y,
-				sb.DI_SCREEN_CENTER
+				gridFlags
 			);
 		}
 		Vector2 gridStep = (10 * hudScale.x, 10 * hudScale.y);
@@ -113,13 +152,13 @@ extend class UaS_SelfBandage {
 				gridColour,
 				gridPos.x + (gridStep.x * i), gridPos.y,
 				hudScale.x, gridSize.y,
-				sb.DI_SCREEN_CENTER
+				gridFlags
 			);
 			sb.Fill(
 				gridColour,
 				gridPos.x, gridPos.y + (gridStep.y * i),
 				gridSize.x, hudScale.y,
-				sb.DI_SCREEN_CENTER
+				gridFlags
 			);
 		}
 
@@ -130,7 +169,7 @@ extend class UaS_SelfBandage {
 				sb.pSmallFont,
 				"You have no wounds.",
 				woundsLocation,
-				sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_CENTER,
+				baseFlags | sb.DI_TEXT_ALIGN_CENTER,
 				Font.CR_DARKGRAY,
 				scale: hudScale
 			);
@@ -197,6 +236,13 @@ extend class UaS_SelfBandage {
 		statusMessage.Split(trueStatusMessage, "\n");
 		Vector2 toolInfoPos = (woundInfoPos.x,  baseOffset / -2 - textHeight / 2 * trueStatusMessage.Size());
 
+		sb.DrawString(
+			sb.pSmallFont,
+			"-----",
+			(toolInfoPos.x, toolInfoPos.y - padStep),
+			sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_LEFT,
+			Font.CR_GRAY
+		);
 		for (int i = 0; i < trueStatusMessage.Size(); i++) {
 			sb.DrawString(
 				sb.pSmallFont,
