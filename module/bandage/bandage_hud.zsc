@@ -125,7 +125,8 @@ extend class UaS_SelfBandage {
 		// cool grid
 		int gridAlpha = 25;
 		Vector2 gridSize = (120 * hudScale.x, 120 * hudScale.y);
-		Color gridColour = Color(gridAlpha, sb.sbcolour.r, sb.sbcolour.g, sb.sbcolour.b);
+		Color patientColour = patient.Player.GetDisplayColor();
+		Color gridColour = Color(gridAlpha, patientColour.r, patientColour.g, patientColour.b);
 		Vector2 gridPos = (
 			woundsLocation.x - (gridSize.x / 2),
 			woundsLocation.y - (gridSize.y / 2)
