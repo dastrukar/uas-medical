@@ -90,7 +90,7 @@ extend class UaS_SelfBandage {
 			"type: "..weaponstatus[0].." | timer: "..timer.." | progress: "..progress.." | timeout: "..timeout
 		);
 
-		Vector2 hudScale = (1.00, 1.00);
+		Vector2 hudScale = (UaS_Bandage_HUDScale, UaS_Bandage_HUDScale);
 		float textHeight = sb.pSmallFont.mFont.GetHeight() * hudscale.y;
 		float padding = 2 * hudScale.y;
 		float padStep = textHeight + padding;
@@ -228,7 +228,8 @@ extend class UaS_SelfBandage {
 				status[i],
 				woundInfoPos,
 				sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_LEFT,
-				Font.CR_GRAY
+				Font.CR_GRAY,
+				scale: hudScale
 			);
 			woundInfoPos += (0, padStep);
 		}
@@ -242,7 +243,8 @@ extend class UaS_SelfBandage {
 			"-----",
 			(toolInfoPos.x, toolInfoPos.y - padStep),
 			sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_LEFT,
-			Font.CR_GRAY
+			Font.CR_GRAY,
+			scale: hudScale
 		);
 		for (int i = 0; i < trueStatusMessage.Size(); i++) {
 			sb.DrawString(
@@ -250,7 +252,8 @@ extend class UaS_SelfBandage {
 				trueStatusMessage[i],
 				toolInfoPos,
 				sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_LEFT,
-				Font.CR_GRAY
+				Font.CR_GRAY,
+				scale: hudScale
 			);
 			toolInfoPos += (0, textHeight);
 		}
@@ -265,7 +268,8 @@ extend class UaS_SelfBandage {
 				msg[i],
 				msgPos,
 				sb.DI_SCREEN_CENTER | sb.DI_TEXT_ALIGN_CENTER,
-				Font.CR_DARKGRAY
+				Font.CR_DARKGRAY,
+				scale: hudScale
 			);
 			msgPos += (0, textHeight);
 		}
