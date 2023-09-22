@@ -11,7 +11,7 @@ class UaS_MedicalTool : HDWeapon {
 	}
 
 	override void DoEffect() {
-		if (!wheel) { wheel = UaS_MedicalWheel(owner.FindInventory("UaS_MedicalWheel")); }
+		if (!wheel || wheel.owner != owner) { wheel = UaS_MedicalWheel(owner.FindInventory("UaS_MedicalWheel")); }
 		SetPatient();
 	}
 
