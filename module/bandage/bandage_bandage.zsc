@@ -16,7 +16,9 @@ extend class UaS_SelfBandage {
 		if (!wh.currentWound) { return; }
 
 		wh.currentWound.Patch(toPatch);
-		wh.currentWound.pressure += pressure;
+		if (wh.currentWound.depth <= 0. || wh.currentWound.pressure <= 0.3) {
+			wh.currentWound.pressure += pressure;
+		}
 	}
 
 	void BandageEffect(int min, int max) {
