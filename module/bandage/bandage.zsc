@@ -25,6 +25,7 @@ class UaS_SelfBandage : UaS_MedicalTool {
 			WEPHELP_RELOAD.."/"..WEPHELP_ALTRELOAD.."  Cycle wounds\n"
 			..WEPHELP_FIREMODE.."  Hold and ...\n"
 			.."  +"..WEPHELP_FIRE.."  Remove blood feeder\n"
+			.."  +"..WEPHELP_ALTFIRE.."  Strip worn layers\n"
 			..WEPHELP_ZOOM.."  Treat another player\n\n"
 			..toolHelpText;
 	}
@@ -48,6 +49,7 @@ class UaS_SelfBandage : UaS_MedicalTool {
 
 		CycleWounds();
 		TryRipBloodbag();
+		TryStripWorn();
 
 		switch (weaponstatus[0]) {
 			default:
@@ -126,6 +128,19 @@ class UaS_SelfBandage : UaS_MedicalTool {
 		HDPlayerPawn(owner).A_MuzzleClimb((0, 2), (0, 0), (0, 0), (0, 0));
 		HDPlayerPawn.PlaySkinSound(patient, SKINSOUND_MEDS, "*usemeds");
 		patient.DropInventory(patient.FindInventory("BloodBagWorn"));
+	}
+
+	void TryStripWorn() {
+		if (!(
+			owner.player.cmd.buttons & BT_FIREMODE
+			&& owner.player.cmd.buttons & BT_ALTFIRE
+			&& !(owner.player.oldbuttons & BT_ALTFIRE)
+		)) { return; }
+		if (HDPlayerPawn.CheckStrip(patient, patient, silent: true)) {
+			currentMessage.text = "Nothing to strip.";
+			currentMessage.timeout = 2 * 35;
+			return;
+		}
 	}
 
 	enum BandageTypes {
