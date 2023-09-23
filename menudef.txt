@@ -22,8 +22,8 @@ OptionMenu "UaS_Medical_Options" {
 
 	StaticText " "
 
+	Control "Use Bandage", "use UaS_SelfBandage"
 	Control "Use Trauma Kit", "use UaS_TraumaKit"
-	Control "Stabilize bandaged wounds", "use UaS_WoundStabilization"
 
 	StaticText " "
 

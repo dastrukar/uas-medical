@@ -1,6 +1,6 @@
 addkeysection "Ugly as Sin" UglyAsSin
+addmenukey "Use Bandage" "use UaS_SelfBandage"
 addmenukey "Use Trauma Kit" "use UaS_TraumaKit"
-addmenukey "Stabilize bandaged wounds" "use UaS_WoundStabilization"
 addmenukey "Switch to Anesthetic" "netevent UaS_TraumaKit_SwitchTo 0"
 addmenukey "Switch to Saline" "netevent UaS_TraumaKit_SwitchTo 1"
 addmenukey "Switch to Forceps" "netevent UaS_TraumaKit_SwitchTo 2"
